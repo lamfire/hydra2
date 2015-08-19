@@ -1,0 +1,13 @@
+package com.lamfire.hydra;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: linfan
+ * Date: 15-8-18
+ * Time: 上午11:14
+ * To change this template use File | Settings | File Templates.
+ */
+public interface Message {
+    public MessageHeader header();
+    public byte[] content();
+}
