@@ -9,32 +9,32 @@ package com.lamfire.hydra;
  */
 public class MessageHeader {
     public static final int HEADER_LENGTH = 12;
-    private int id;
-    private int contentLength;
-    private int checksum;
+    private int id = 0;
+    private int contentLength = 0;
+    private int option = 0;
 
-    public int getId() {
+    public int id() {
         return id;
     }
 
-    public void setId(int id) {
+    public void id(int id) {
         this.id = id;
     }
 
-    public int getContentLength() {
+    public int contentLength() {
         return contentLength;
     }
 
-    public void setContentLength(int contentLength) {
+    public void contentLength(int contentLength) {
         this.contentLength = contentLength;
     }
 
-    public int getChecksum() {
-        return checksum;
+    public int option() {
+        return option;
     }
 
-    public void setChecksum(int checksum) {
-        this.checksum = checksum;
+    public void option(int option) {
+        this.option = option;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MessageHeader {
         return "MessageHeader{" +
                 "id=" + id +
                 ", contentLength=" + contentLength +
-                ", checksum=" + checksum +
+                ", option=" + option +
                 '}';
     }
 }

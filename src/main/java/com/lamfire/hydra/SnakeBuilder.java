@@ -15,7 +15,6 @@ public class SnakeBuilder {
     private int port = 1980;
     private int threads = 16;
     private MessageReceivedListener  messageReceivedListener;
-    private boolean checksumEnable = false;
     private boolean heartbeatEnable = false;
     private boolean autoConnectRetry = false;
     private int heartbeatInterval = 15000;
@@ -56,11 +55,6 @@ public class SnakeBuilder {
         return this;
     }
 
-    public SnakeBuilder checksumEnable(boolean checksumEnable){
-        this.checksumEnable = checksumEnable;
-        return this;
-    }
-
     public SnakeBuilder autoConnectRetry(boolean autoConnectRetry){
         this.autoConnectRetry = autoConnectRetry;
         return this;
@@ -72,7 +66,6 @@ public class SnakeBuilder {
         NettyClient client = new NettyClient(host,port);
         client.setMessageReceivedListener(messageReceivedListener);
         client.setWorkerThreads(threads);
-        client.setChecksumEnable(checksumEnable);
         client.setHeartbeatEnable(heartbeatEnable);
         client.setHeartbeatInterval(heartbeatInterval);
         client.setHeartbeatListener(heartbeatListener);

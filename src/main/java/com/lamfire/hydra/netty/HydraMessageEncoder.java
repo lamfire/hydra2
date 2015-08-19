@@ -18,10 +18,10 @@ public class HydraMessageEncoder extends MessageToByteEncoder<Message> {
     @Override
     protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
         MessageHeader header = msg.header();
-        out.writeInt(header.getId());
-        out.writeInt(header.getContentLength());
-        out.writeInt(header.getChecksum());
-        if(header.getContentLength() > 0){
+        out.writeInt(header.id());
+        out.writeInt(header.contentLength());
+        out.writeInt(header.option());
+        if(header.contentLength() > 0){
             out.writeBytes(msg.content());
         }
     }

@@ -24,14 +24,15 @@ public class SnakeBootstrap implements MessageReceivedListener {
 
         Session session = snake.getSession();
 
-        for(int i=0;i<100000;i++){
+        int i=0;
+        while(true){
             String data = RandomUtils.randomText(100);
             byte[] content = data.getBytes();
-            int crc32 = CRC32.digest(content);
+            int option = CRC32.digest(content);
             //System.out.println(i + " - CRC32 = " + crc32 + " -> " + data);
 
-            int id = i;
-            Message m = MessageFactory.message(id,crc32,content);
+            int id = i++;
+            Message m = MessageFactory.message(id,option,content);
             session.send(m);
 
             Threads.sleep(10);

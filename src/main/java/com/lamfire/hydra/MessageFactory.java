@@ -12,25 +12,13 @@ import com.lamfire.code.CRC32;
 public class MessageFactory {
     private MessageFactory (){}
 
-    public static Message message(int id,byte[] content){
-        return message(id,content,false);
-    }
-
-    public static Message message(int id,byte[] content,boolean checksumEnable){
-        int checksum = -1;
-        if(checksumEnable){
-            checksum = CRC32.digest(content);
-        }
-        return message(id,checksum,content);
-    }
-
-    public static Message message(int id,int checksum,byte[] content){
+    public static Message message(int id,int option,byte[] content){
         HydraMessage m = new HydraMessage();
-        m.header().setId(id);
-        m.header().setChecksum(checksum);
+        m.header().id(id);
+        m.header().option(option);
 
         if(content != null){
-            m.header().setContentLength(content.length);
+            m.header().contentLength(content.length);
             m.content(content);
         }
         return m;

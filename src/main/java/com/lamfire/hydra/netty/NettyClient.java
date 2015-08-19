@@ -39,7 +39,6 @@ public class NettyClient implements Snake {
     private String host;
     private int port = 1980;
     private int workerThreads = 16;
-    private boolean checksumEnable = false;
 
     public NettyClient(int port){
         this.port = port;
@@ -86,15 +85,6 @@ public class NettyClient implements Snake {
         this.workerThreads = workerThreads;
     }
 
-    public boolean isChecksumEnable() {
-        return checksumEnable;
-    }
-
-    public void setChecksumEnable(boolean checksumEnable) {
-        this.checksumEnable = checksumEnable;
-    }
-
-
     public synchronized void startup() {
         if(bootstrap != null){
             LOGGER.error("Bootstrap was running,system shutdown now...");
@@ -110,7 +100,7 @@ public class NettyClient implements Snake {
                             ch.pipeline().addLast(new LengthFieldPrepender(4, false));
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
                             ch.pipeline().addLast(new HydraMessageEncoder());
-                            ch.pipeline().addLast(new HydraMessageDecoder(checksumEnable));
+                            ch.pipeline().addLast(new HydraMessageDecoder());
                             ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener));
                         }
                     });

@@ -85,7 +85,7 @@ public class NettyServer implements Hydra {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new LengthFieldPrepender(4, false));
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
-                            ch.pipeline().addLast(new HydraMessageDecoder(checksumEnable));
+                            ch.pipeline().addLast(new HydraMessageDecoder());
                             ch.pipeline().addLast(new HydraMessageEncoder());
                             ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener));
                         }

@@ -16,31 +16,25 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class HydraMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
-    private boolean checksumEnable = false;
-
     public HydraMessageDecoder(){
 
-    }
-
-    public HydraMessageDecoder(boolean checksumEnable){
-        this.checksumEnable = checksumEnable;
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
         int id = msg.readInt();
         int contentLength = msg.readInt();
-        int checksum = msg.readInt();
+        int option = msg.readInt();
         byte[] content = null;
 
         //is heartbeat request
-        if(HeartbeatMessage.isHeartbeatRequest(id,contentLength,checksum)){
+        if(HeartbeatMessage.isHeartbeatRequest(id,contentLength,option)){
             out.add(HeartbeatMessage.HEARTBEAT_REQUEST_MESSAGE);
             return ;
         }
 
         //is heartbeat request
-        if(HeartbeatMessage.isHeartbeatResponse(id, contentLength, checksum)){
+        if(HeartbeatMessage.isHeartbeatResponse(id, contentLength, option)){
             out.add(HeartbeatMessage.HEARTBEAT_RESPONSE_MESSAGE);
             return ;
         }
@@ -51,6 +45,6 @@ public class HydraMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
             content = new byte[contentLength];
             msg.readBytes(content);
         }
-        out.add(MessageFactory.message(id,checksum,content));
+        out.add(MessageFactory.message(id,option,content));
     }
 }

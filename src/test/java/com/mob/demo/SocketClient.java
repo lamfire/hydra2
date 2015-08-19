@@ -28,14 +28,14 @@ public class SocketClient {
         for(int i=0;i<1;i++){
             String data = RandomUtils.randomText(100);
             byte[] content = data.getBytes();
-            int crc32 = CRC32.digest(content);
-            System.out.println(i + " - CRC32 = " + crc32 + " -> " + data);
+            int option = CRC32.digest(content);
+            System.out.println(i + " - CRC32 = " + option + " -> " + data);
 
 
             os.write(Bytes.toBytes(content.length + 12));
             os.write(Bytes.toBytes(i));                          //id
             os.write(Bytes.toBytes(content.length));            //length
-            os.write(Bytes.toBytes(crc32));                      //checksum
+            os.write(Bytes.toBytes(option));                      //checksum
             os.write(content);                                   //content
             os.flush();
         }

@@ -22,11 +22,11 @@ class HydraMessage implements Message {
     }
 
     public void id(int id){
-        header.setId(id);
+        header.id(id);
     }
 
     public int id(){
-        return header.getId();
+        return header.id();
     }
 
         @Override

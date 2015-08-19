@@ -11,45 +11,48 @@ public final class HeartbeatMessage extends HydraMessage{
     public static final HeartbeatMessage HEARTBEAT_REQUEST_MESSAGE = new HeartbeatMessage();
     public static final HeartbeatMessage HEARTBEAT_RESPONSE_MESSAGE = new HeartbeatMessage();
 
-    static {
-        HEARTBEAT_REQUEST_MESSAGE.header().setId(0);
-        HEARTBEAT_REQUEST_MESSAGE.header().setContentLength(0);
-        HEARTBEAT_REQUEST_MESSAGE.header().setChecksum(0);
+    private static final int OPTION_HEARTBEAT_REQUEST = 0x9999;
+    private static final int OPTION_HEARTBEAT_RESPONSE = 0x8888;
 
-        HEARTBEAT_RESPONSE_MESSAGE.header().setId(0);
-        HEARTBEAT_RESPONSE_MESSAGE.header().setContentLength(0);
-        HEARTBEAT_RESPONSE_MESSAGE.header().setChecksum(-1);
+    static {
+        HEARTBEAT_REQUEST_MESSAGE.header().id(0);
+        HEARTBEAT_REQUEST_MESSAGE.header().contentLength(0);
+        HEARTBEAT_REQUEST_MESSAGE.header().option(OPTION_HEARTBEAT_REQUEST);
+
+        HEARTBEAT_RESPONSE_MESSAGE.header().id(0);
+        HEARTBEAT_RESPONSE_MESSAGE.header().contentLength(0);
+        HEARTBEAT_RESPONSE_MESSAGE.header().option(OPTION_HEARTBEAT_RESPONSE);
     }
 
-    public static boolean isHeartbeatRequest(int id,int len,int checksum){
-        if(id == 0 && len == 0 && checksum ==0){
+    public static boolean isHeartbeatRequest(int id,int len,int option){
+        if(id == 0 && len == 0 && option ==OPTION_HEARTBEAT_REQUEST){
             return true;
         }
 
         return false;
     }
 
-    public static boolean isHeartbeatResponse(int id,int len,int checksum){
-        if(id == 0 && len == 0 && checksum ==-1){
+    public static boolean isHeartbeatResponse(int id,int len,int option){
+        if(id == 0 && len == 0 && option == OPTION_HEARTBEAT_RESPONSE){
             return true;
         }
         return false;
     }
 
     public boolean isHeartbeatRequest(){
-        int id = this.header().getId();
-        int len = this.header().getContentLength();
-        int checksum = this.header().getChecksum();
+        int id = this.header().id();
+        int len = this.header().contentLength();
+        int option = this.header().option();
 
-        return isHeartbeatRequest(id,len,checksum);
+        return isHeartbeatRequest(id,len,option);
     }
 
     public boolean isHeartbeatResponse(){
-        int id = this.header().getId();
-        int len = this.header().getContentLength();
-        int checksum = this.header().getChecksum();
+        int id = this.header().id();
+        int len = this.header().contentLength();
+        int option = this.header().option();
 
-        return isHeartbeatResponse(id, len, checksum);
+        return isHeartbeatResponse(id, len, option);
     }
 
     public String toString(){
