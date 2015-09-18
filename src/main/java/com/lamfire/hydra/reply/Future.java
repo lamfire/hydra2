@@ -1,4 +1,4 @@
-package com.mob.demo.reply;
+package com.lamfire.hydra.reply;
 
 import com.lamfire.hydra.Message;
 
@@ -12,8 +12,10 @@ import java.util.concurrent.TimeoutException;
  * To change this template use File | Settings | File Templates.
  */
 public class Future {
+    private final long createAt = System.currentTimeMillis();
     private Message response;
     private long timeout = 6000;
+
 
     public synchronized Message getResponse() throws TimeoutException {
         if(response == null){
@@ -36,4 +38,8 @@ public class Future {
         this.notifyAll();
     }
 
+
+    boolean isTimeout(){
+        return System.currentTimeMillis() - createAt - timeout > 0;
+    }
 }

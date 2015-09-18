@@ -1,12 +1,13 @@
-package com.mob.demo.reply;
+package com.lamfire.hydra.reply;
 
-import com.lamfire.code.CRC32;
 import com.lamfire.hydra.*;
 import com.lamfire.utils.Maps;
 import com.lamfire.utils.RandomUtils;
 import com.lamfire.utils.Threads;
 
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,17 +18,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 上午11:00
  * To change this template use File | Settings | File Templates.
  */
-public class ReplySnakeBootstrap implements MessageReceivedListener {
+public class ReplySnake implements MessageReceivedListener {
+    final ScheduledExecutorService cleanService = Executors.newSingleThreadScheduledExecutor(Threads.makeThreadFactory("FutureTimeoutClean"));
     final Map<Integer,Future> replys = Maps.newConcurrentMap();
     final AtomicInteger counter = new AtomicInteger();
 
-    Snake snake ;
+    private Snake snake ;
 
     public void startup(String host,int port){
         SnakeBuilder builder = new SnakeBuilder();
         builder.host(host).port(port).messageReceivedListener(this).heartbeatEnable(true).heartbeatInterval(5000);
         snake = builder.build();
         snake.startup();
+
+        cleanService.scheduleWithFixedDelay(new FutureTimeoutClean(replys),15,15,TimeUnit.SECONDS);
     }
 
 
@@ -47,35 +51,6 @@ public class ReplySnakeBootstrap implements MessageReceivedListener {
         Future f = replys.remove(id);
         if(f != null){
             f.onResponse(message);
-        }
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        ReplySnakeBootstrap reply = new ReplySnakeBootstrap();
-        reply.startup("127.0.0.1",1980);
-
-        final AtomicInteger c = new AtomicInteger();
-
-        Threads.scheduleAtFixedRate(new Runnable() {
-            int pre = 0;
-            @Override
-            public void run() {
-                int cur = c.get();
-                System.out.println((cur - pre) + "/s");
-                pre = cur;
-            }
-        },1,1, TimeUnit.SECONDS);
-
-        while(true){
-            c.incrementAndGet();
-            String data = RandomUtils.randomText(100);
-            byte[] content = data.getBytes();
-            Future f = reply.send(content);
-            Message m = f.getResponse() ;
-            if(m.content() != null){
-                //System.out.println(new String(m.content()));
-            }
         }
     }
 }
