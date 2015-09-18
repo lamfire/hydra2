@@ -16,6 +16,9 @@ public class Future {
     private Message response;
     private long timeout = 6000;
 
+    void setTimeout(long timeoutMillis){
+        this.timeout = timeoutMillis;
+    }
 
     public synchronized Message getResponse() throws TimeoutException {
         if(response == null){

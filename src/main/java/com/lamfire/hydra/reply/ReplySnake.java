@@ -23,21 +23,49 @@ public class ReplySnake implements MessageReceivedListener {
     final Map<Integer,Future> replys = Maps.newConcurrentMap();
     final AtomicInteger counter = new AtomicInteger();
 
+    private long readTimeoutMillis = 6000;
+    private int heartbeatIntervalMillis = 15000;
+    private boolean heartbeatEnable = true;
+
     private Snake snake ;
 
     public void startup(String host,int port){
         SnakeBuilder builder = new SnakeBuilder();
-        builder.host(host).port(port).messageReceivedListener(this).heartbeatEnable(true).heartbeatInterval(5000);
+        builder.host(host).port(port).messageReceivedListener(this).heartbeatEnable(heartbeatEnable).heartbeatInterval(heartbeatIntervalMillis);
         snake = builder.build();
         snake.startup();
 
         cleanService.scheduleWithFixedDelay(new FutureTimeoutClean(replys),15,15,TimeUnit.SECONDS);
     }
 
+    public long getReadTimeoutMillis() {
+        return readTimeoutMillis;
+    }
+
+    public void setReadTimeoutMillis(long readTimeoutMillis) {
+        this.readTimeoutMillis = readTimeoutMillis;
+    }
+
+    public int getHeartbeatIntervalMillis() {
+        return heartbeatIntervalMillis;
+    }
+
+    public void setHeartbeatIntervalMillis(int heartbeatIntervalMillis) {
+        this.heartbeatIntervalMillis = heartbeatIntervalMillis;
+    }
+
+    public boolean isHeartbeatEnable() {
+        return heartbeatEnable;
+    }
+
+    public void setHeartbeatEnable(boolean heartbeatEnable) {
+        this.heartbeatEnable = heartbeatEnable;
+    }
 
     public Future send(byte[] bytes){
         Message m = MessageFactory.message(counter.incrementAndGet(),0,bytes);
         Future f = new Future();
+        f.setTimeout(readTimeoutMillis);
         replys.put(m.header().id(),f);
         snake.getSession().send(m);
         return f;
