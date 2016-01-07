@@ -24,6 +24,16 @@ public class MessageFactory {
         return m;
     }
 
+    public static Message message(int id,byte[] content){
+        HydraMessage m = new HydraMessage();
+        m.header().id(id);
+        m.header().option(0);
+        if(content != null){
+            m.header().contentLength(content.length);
+            m.content(content);
+        }
+        return m;
+    }
 
 
 }
