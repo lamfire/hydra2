@@ -10,4 +10,5 @@ package com.lamfire.hydra;
 public interface Message {
     public MessageHeader header();
     public byte[] content();
+    public void content(byte[] content);
 }
