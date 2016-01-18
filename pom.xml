@@ -6,7 +6,7 @@
 
     <groupId>com.lamfire</groupId>
     <artifactId>hydra</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
 
     <dependencies>
         <dependency>
@@ -71,5 +71,12 @@
             </plugin>
         </plugins>
     </build>
-    
+
+    <distributionManagement>
+        <repository>
+            <id>lamfire</id>
+            <name>lamfire-respository</name>
+            <url>http://m2.lamfire.com:8081/nexus/content/repositories/lamfire/</url>
+        </repository>
+    </distributionManagement>
 </project>
