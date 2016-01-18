@@ -29,13 +29,26 @@ public class ReplySnake implements MessageReceivedListener {
 
     private Snake snake ;
 
-    public void startup(String host,int port){
+    public synchronized void startup(String host,int port){
+        if(snake != null){
+            return;
+        }
         SnakeBuilder builder = new SnakeBuilder();
         builder.host(host).port(port).messageReceivedListener(this).heartbeatEnable(heartbeatEnable).heartbeatInterval(heartbeatIntervalMillis);
         snake = builder.build();
         snake.startup();
 
         cleanService.scheduleWithFixedDelay(new FutureTimeoutClean(replys),15,15,TimeUnit.SECONDS);
+    }
+
+    public void shutdown(){
+        if(cleanService != null){
+            cleanService.shutdown();
+        }
+        if(snake != null){
+            snake.shutdown();
+            snake = null;
+        }
     }
 
     public long getReadTimeoutMillis() {
