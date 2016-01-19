@@ -14,4 +14,5 @@ public interface Snake {
     public MessageReceivedListener getMessageReceivedListener();
     public void setMessageReceivedListener(MessageReceivedListener listener);
     public Session getSession();
+    public boolean isAvailable();
 }

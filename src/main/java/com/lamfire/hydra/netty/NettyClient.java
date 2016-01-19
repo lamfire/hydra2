@@ -182,6 +182,14 @@ public class NettyClient implements Snake {
         return mgr.all().iterator().next();
     }
 
+    @Override
+    public boolean isAvailable() {
+        if(!mgr.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
     Runnable heartbeat = new Runnable() {
         @Override
         public void run() {
