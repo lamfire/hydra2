@@ -9,6 +9,7 @@ import com.lamfire.hydra.SessionMgr;
 import io.netty.channel.Channel;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,9 @@ public class NettySessionMgr implements SessionMgr {
         public void onClosed(Session session) {
             LOGGER.debug("[REMOVE] session was closed,remove it -> " + session);
             remove(session);
-            for(SessionClosedListener listener : sessionClosedListeners){
+
+            List<SessionClosedListener> listeners = Lists.newArrayList(sessionClosedListeners);
+            for(SessionClosedListener listener : listeners){
                 listener.onClosed(session);
             }
         }

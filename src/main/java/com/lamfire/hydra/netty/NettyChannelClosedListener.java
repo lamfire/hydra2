@@ -2,10 +2,12 @@ package com.lamfire.hydra.netty;
 
 import com.lamfire.logger.Logger;
 import com.lamfire.hydra.SessionClosedListener;
+import com.lamfire.utils.Lists;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,7 +27,7 @@ class NettyChannelClosedListener implements GenericFutureListener<Future<Void>> 
 
     @Override
     public void operationComplete(Future<Void> future) throws Exception {
-        Collection<SessionClosedListener> listeners = session.closedListeners();
+        Collection<SessionClosedListener> listeners = Lists.newArrayList(session.closedListeners());
         for(SessionClosedListener l : listeners){
             l.onClosed(session);
         }
