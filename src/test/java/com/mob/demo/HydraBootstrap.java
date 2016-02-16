@@ -1,6 +1,7 @@
 package com.mob.demo;
 
 import com.lamfire.hydra.*;
+import com.lamfire.utils.StringUtils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,8 +13,22 @@ import com.lamfire.hydra.*;
 public class HydraBootstrap implements MessageReceivedListener {
 
     public static void main(String[] args) {
+        String host = "0.0.0.0";
+        int port = 1980;
+        if(args != null){
+            for(String arg : args){
+                if(StringUtils.contains(arg, "-p")){
+                    port = Integer.valueOf(StringUtils.substringAfter(arg,"-p").trim());
+                }
+
+                if(StringUtils.contains(arg,"-h")){
+                    host = (StringUtils.substringAfter(arg, "-h").trim());
+                }
+            }
+        }
+
         HydraBuilder builder = new HydraBuilder();
-        builder.bind("0.0.0.0").port(1980).messageReceivedListener(new HydraBootstrap());
+        builder.bind(host).port(port).messageReceivedListener(new HydraBootstrap());
 
         Hydra hydra = builder.build();
         hydra.startup();
