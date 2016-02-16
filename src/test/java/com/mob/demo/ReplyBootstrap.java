@@ -39,8 +39,8 @@ public class ReplyBootstrap {
             String data = RandomUtils.randomText(100);
             byte[] content = data.getBytes();
             Future f = reply.send(content);
-            Message m = f.getResponse() ;
-            if(m.content() != null){
+            byte[] bytes = f.getResponse() ;
+            if(bytes != null){
                 //System.out.println(new String(m.content()));
             }
         }

@@ -30,4 +30,8 @@ public interface Session {
     public void attr(String name,Object value);
 
     public void heartbeat();
+
+    public void addCloseListener(SessionClosedListener listener);
+
+    public void removeCloseListener(SessionClosedListener listener);
 }

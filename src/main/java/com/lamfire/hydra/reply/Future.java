@@ -20,7 +20,7 @@ public class Future {
         this.timeout = timeoutMillis;
     }
 
-    public synchronized Message getResponse() throws TimeoutException {
+    public synchronized Message getResponseMessage() throws TimeoutException {
         if(response == null){
             try {
                 this.wait(timeout);
@@ -34,6 +34,10 @@ public class Future {
         }
 
         return response;
+    }
+
+    public byte[] getResponse()throws TimeoutException{
+        return getResponseMessage().content();
     }
 
     synchronized void onResponse(Message response){
