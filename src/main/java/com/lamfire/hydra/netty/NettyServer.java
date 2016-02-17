@@ -61,6 +61,10 @@ public class NettyServer implements Hydra {
         this.sessionCreatedListener = listener;
     }
 
+    public void setSessionClosedListener(SessionClosedListener sessionClosedListener){
+        this.mgr.addSessionClosedListener(sessionClosedListener);
+    }
+
     @Override
     public SessionMgr getSessionMgr() {
         return mgr;

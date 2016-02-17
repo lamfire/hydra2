@@ -16,6 +16,7 @@ public class HydraBuilder {
     private int threads = 16;
     private MessageReceivedListener  messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
+    private SessionClosedListener sessionClosedListener;
     private HeartbeatListener heartbeatListener = new DefaultHeartbeatListener();
 
     public HydraBuilder bind(String bind){
@@ -48,12 +49,18 @@ public class HydraBuilder {
         return this;
     }
 
+    public HydraBuilder sessionClosedListener(SessionClosedListener sessionClosedListener){
+        this.sessionClosedListener = sessionClosedListener;
+        return this;
+    }
+
     public Hydra build(){
         Asserts.notNullAssert(messageReceivedListener);
         NettyServer server = new NettyServer(bind,port);
         server.setMessageReceivedListener(messageReceivedListener);
         server.setHeartbeatListener(heartbeatListener);
         server.setSessionCreatedListener(sessionCreatedListener);
+        server.setSessionClosedListener(sessionClosedListener);
         server.setWorkerThreads(threads);
         return server;
     }
