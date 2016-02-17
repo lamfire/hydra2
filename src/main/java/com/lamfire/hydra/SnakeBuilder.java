@@ -19,6 +19,8 @@ public class SnakeBuilder {
     private boolean autoConnectRetry = false;
     private int heartbeatInterval = 15000;
     private HeartbeatListener heartbeatListener = new DefaultHeartbeatListener();
+    private SessionCreatedListener sessionCreatedListener;
+    private SessionClosedListener sessionClosedListener;
 
     public SnakeBuilder host(String host){
         this.host = host;
@@ -60,6 +62,16 @@ public class SnakeBuilder {
         return this;
     }
 
+    public SnakeBuilder sessionCreatedListener(SessionCreatedListener listener){
+        this.sessionCreatedListener = listener;
+        return this;
+    }
+
+    public SnakeBuilder sessionClosedListener(SessionClosedListener sessionClosedListener){
+        this.sessionClosedListener = sessionClosedListener;
+        return this;
+    }
+
     public Snake build(){
         Asserts.notNullAssert(host);
         Asserts.notNullAssert(messageReceivedListener);
@@ -70,6 +82,8 @@ public class SnakeBuilder {
         client.setHeartbeatInterval(heartbeatInterval);
         client.setHeartbeatListener(heartbeatListener);
         client.setAutoConnectRetry(autoConnectRetry);
+        client.setSessionCreatedListener(sessionCreatedListener);
+        client.setSessionClosedListener(sessionClosedListener);
         return client;
     }
 }

@@ -27,6 +27,8 @@ public class NettyClient implements Snake {
     private static final Logger LOGGER = Logger.getLogger(NettyClient.class);
     private final NettySessionMgr mgr = new NettySessionMgr();
     private MessageReceivedListener messageReceivedListener;
+    private SessionCreatedListener sessionCreatedListener;
+    private SessionClosedListener sessionClosedListener;
     private Bootstrap bootstrap;
     private EventLoopGroup workerGroup;
 
@@ -59,6 +61,14 @@ public class NettyClient implements Snake {
 
     public void setHeartbeatListener(HeartbeatListener heartbeatListener) {
         this.heartbeatListener = heartbeatListener;
+    }
+
+    public void setSessionCreatedListener(SessionCreatedListener listener){
+        this.sessionCreatedListener = listener;
+    }
+
+    public void setSessionClosedListener(SessionClosedListener sessionClosedListener){
+        this.sessionClosedListener = sessionClosedListener;
     }
 
     public boolean isAutoConnectRetry() {
@@ -101,7 +111,7 @@ public class NettyClient implements Snake {
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
                             ch.pipeline().addLast(new HydraMessageEncoder());
                             ch.pipeline().addLast(new HydraMessageDecoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener,sessionCreatedListener,sessionClosedListener));
                         }
                     });
 

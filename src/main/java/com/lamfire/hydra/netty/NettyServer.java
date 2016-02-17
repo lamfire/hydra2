@@ -26,6 +26,7 @@ public class NettyServer implements Hydra {
     private final NettySessionMgr mgr = new NettySessionMgr();
     private MessageReceivedListener messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
+    private SessionClosedListener sessionClosedListener;
     private HeartbeatListener heartbeatListener;
     private ServerBootstrap bootstrap;
     private EventLoopGroup bossGroup;
@@ -62,7 +63,7 @@ public class NettyServer implements Hydra {
     }
 
     public void setSessionClosedListener(SessionClosedListener sessionClosedListener){
-        this.mgr.addSessionClosedListener(sessionClosedListener);
+        this.sessionClosedListener = sessionClosedListener;
     }
 
     @Override
@@ -87,7 +88,7 @@ public class NettyServer implements Hydra {
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
                             ch.pipeline().addLast(new HydraMessageDecoder());
                             ch.pipeline().addLast(new HydraMessageEncoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener));
                         }
                     }).option(ChannelOption.SO_BACKLOG, 100)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);

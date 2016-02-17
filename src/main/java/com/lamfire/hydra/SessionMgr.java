@@ -16,6 +16,4 @@ public interface SessionMgr {
     public void close();
     public int size();
     public boolean isEmpty();
-    public void addSessionClosedListener(SessionClosedListener closedListener);
-    public void removeSessionCloseListener(SessionClosedListener listener);
 }

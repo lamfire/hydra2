@@ -18,12 +18,14 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     private final MessageReceivedListener messageReceivedListener;
     private HeartbeatListener heartbeatListener;
     private SessionCreatedListener sessionCreatedListener;
+    private SessionClosedListener sessionClosedListener;
 
-    public NettyInboundHandler(NettySessionMgr sessionMgr, MessageReceivedListener messageReceivedListener,HeartbeatListener heartbeatListener,SessionCreatedListener sessionCreatedListener){
+    public NettyInboundHandler(NettySessionMgr sessionMgr, MessageReceivedListener messageReceivedListener,HeartbeatListener heartbeatListener,SessionCreatedListener sessionCreatedListener,SessionClosedListener sessionClosedListener){
         this.sessionMgr = sessionMgr;
         this.messageReceivedListener = messageReceivedListener;
         this.heartbeatListener = heartbeatListener;
         this.sessionCreatedListener = sessionCreatedListener;
+        this.sessionClosedListener = sessionClosedListener;
     }
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -63,6 +65,9 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
         sessionMgr.add(s);
         if(sessionCreatedListener != null){
             sessionCreatedListener.onCreated(s);
+        }
+        if(sessionClosedListener != null){
+            s.addCloseListener(sessionClosedListener);
         }
         LOGGER.debug("channelActive - " + s);
     }

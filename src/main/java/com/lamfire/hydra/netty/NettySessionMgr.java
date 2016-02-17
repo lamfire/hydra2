@@ -23,28 +23,14 @@ import java.util.Map;
 public class NettySessionMgr implements SessionMgr {
     private static final Logger LOGGER = Logger.getLogger(NettySessionMgr.class);
     private final Map<Long,Session> sessions = Maps.newConcurrentMap();
-    private final List<SessionClosedListener> sessionClosedListeners = Lists.newArrayList();
 
     private SessionClosedListener closedListener = new SessionClosedListener() {
         @Override
         public void onClosed(Session session) {
             LOGGER.debug("[REMOVE] session was closed,remove it -> " + session);
             remove(session);
-
-            List<SessionClosedListener> listeners = Lists.newArrayList(sessionClosedListeners);
-            for(SessionClosedListener listener : listeners){
-                listener.onClosed(session);
-            }
         }
     };
-
-    public void addSessionClosedListener(SessionClosedListener closedListener){
-        sessionClosedListeners.add(closedListener);
-    }
-
-    public void removeSessionCloseListener(SessionClosedListener listener){
-        sessionClosedListeners.remove(listener);
-    }
 
     @Override
     public void add(Session session) {
