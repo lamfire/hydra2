@@ -25,12 +25,12 @@ public class NettyServer implements Hydra {
     private static final Logger LOGGER = Logger.getLogger(NettyServer.class);
     private final NettySessionMgr mgr = new NettySessionMgr();
     private MessageReceivedListener messageReceivedListener;
+    private SessionCreatedListener sessionCreatedListener;
     private HeartbeatListener heartbeatListener;
     private ServerBootstrap bootstrap;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ChannelFuture bindFuture;
-    private boolean checksumEnable = false;
 
     private String bind = "0.0.0.0";
     private int port = 1980;
@@ -53,16 +53,12 @@ public class NettyServer implements Hydra {
         this.workerThreads = workerThreads;
     }
 
-    public boolean isChecksumEnable() {
-        return checksumEnable;
-    }
-
-    public void setChecksumEnable(boolean checksumEnable) {
-        this.checksumEnable = checksumEnable;
-    }
-
     public void setHeartbeatListener(HeartbeatListener heartbeatListener) {
         this.heartbeatListener = heartbeatListener;
+    }
+
+    public void setSessionCreatedListener(SessionCreatedListener listener){
+        this.sessionCreatedListener = listener;
     }
 
     @Override
@@ -87,7 +83,7 @@ public class NettyServer implements Hydra {
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
                             ch.pipeline().addLast(new HydraMessageDecoder());
                             ch.pipeline().addLast(new HydraMessageEncoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener));
                         }
                     }).option(ChannelOption.SO_BACKLOG, 100)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);

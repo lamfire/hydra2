@@ -15,8 +15,8 @@ public class HydraBuilder {
     private int port = 1980;
     private int threads = 16;
     private MessageReceivedListener  messageReceivedListener;
+    private SessionCreatedListener sessionCreatedListener;
     private HeartbeatListener heartbeatListener = new DefaultHeartbeatListener();
-    private boolean checksumEnable = false;
 
     public HydraBuilder bind(String bind){
         this.bind = bind;
@@ -38,13 +38,13 @@ public class HydraBuilder {
         return this;
     }
 
-    public HydraBuilder checksumEnable(boolean checksumEnable){
-        this.checksumEnable = checksumEnable;
+    public HydraBuilder messageReceivedListener(MessageReceivedListener listener){
+        this.messageReceivedListener = listener;
         return this;
     }
 
-    public HydraBuilder messageReceivedListener(MessageReceivedListener listener){
-        this.messageReceivedListener = listener;
+    public HydraBuilder sessionCreatedListener(SessionCreatedListener listener){
+        this.sessionCreatedListener = listener;
         return this;
     }
 
@@ -53,6 +53,7 @@ public class HydraBuilder {
         NettyServer server = new NettyServer(bind,port);
         server.setMessageReceivedListener(messageReceivedListener);
         server.setHeartbeatListener(heartbeatListener);
+        server.setSessionCreatedListener(sessionCreatedListener);
         server.setWorkerThreads(threads);
         return server;
     }

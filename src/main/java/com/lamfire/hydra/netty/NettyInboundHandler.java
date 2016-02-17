@@ -17,11 +17,13 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     private final NettySessionMgr  sessionMgr;
     private final MessageReceivedListener messageReceivedListener;
     private HeartbeatListener heartbeatListener;
+    private SessionCreatedListener sessionCreatedListener;
 
-    public NettyInboundHandler(NettySessionMgr sessionMgr, MessageReceivedListener messageReceivedListener,HeartbeatListener heartbeatListener){
+    public NettyInboundHandler(NettySessionMgr sessionMgr, MessageReceivedListener messageReceivedListener,HeartbeatListener heartbeatListener,SessionCreatedListener sessionCreatedListener){
         this.sessionMgr = sessionMgr;
         this.messageReceivedListener = messageReceivedListener;
         this.heartbeatListener = heartbeatListener;
+        this.sessionCreatedListener = sessionCreatedListener;
     }
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -59,6 +61,9 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
         long id = UUIDGen.getTimeSafe();
         NettySession s = new NettySession(id,ctx);
         sessionMgr.add(s);
+        if(sessionCreatedListener != null){
+            sessionCreatedListener.onCreated(s);
+        }
         LOGGER.debug("channelActive - " + s);
     }
 
