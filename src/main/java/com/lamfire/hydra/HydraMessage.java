@@ -1,6 +1,8 @@
 package com.lamfire.hydra;
 
 
+import java.nio.charset.Charset;
+
 /**
  * Created with IntelliJ IDEA.
  * User: linfan
@@ -41,5 +43,33 @@ class HydraMessage implements Message {
 
     public void content(byte[] content) {
         this.content = content;
+    }
+
+    @Override
+    public int getId() {
+        return header().id();
+    }
+
+    @Override
+    public int getOption() {
+        return header().option();
+    }
+
+    @Override
+    public int getContentLength() {
+        return header().contentLength();
+    }
+
+    @Override
+    public byte[] getContent() {
+        return content;
+    }
+
+    @Override
+    public String getContentAsString(String charset) {
+        if(content == null){
+            return null;
+        }
+        return new String(content, Charset.forName(charset));
     }
 }

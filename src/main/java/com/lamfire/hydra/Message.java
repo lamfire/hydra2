@@ -11,4 +11,9 @@ public interface Message {
     public MessageHeader header();
     public byte[] content();
     public void content(byte[] content);
+    public int getId();
+    public int getOption();
+    public int getContentLength();
+    public byte[] getContent();
+    public String getContentAsString(String charset);
 }

@@ -12,6 +12,23 @@ import com.lamfire.code.CRC32;
 public class MessageFactory {
     private MessageFactory (){}
 
+    public static Message makeHeartbeatRequestMessage(){
+        return HeartbeatMessage.HEARTBEAT_REQUEST_MESSAGE;
+    }
+
+    public static Message makeHeartbeatResponseMessage(){
+        return HeartbeatMessage.HEARTBEAT_RESPONSE_MESSAGE;
+    }
+
+    public static Message makeMessage(int id,int option,byte[] content){
+        return message(id,option,content);
+    }
+
+    public static Message makeMessage(int id,byte[] content){
+        return message(id,content);
+    }
+
+
     public static Message message(int id,int option,byte[] content){
         HydraMessage m = new HydraMessage();
         m.header().id(id);

@@ -74,7 +74,6 @@ public class SnakeBuilder {
 
     public Snake build(){
         Asserts.notNullAssert(host);
-        Asserts.notNullAssert(messageReceivedListener);
         NettyClient client = new NettyClient(host,port);
         client.setMessageReceivedListener(messageReceivedListener);
         client.setWorkerThreads(threads);
