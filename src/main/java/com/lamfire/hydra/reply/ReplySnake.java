@@ -23,23 +23,50 @@ public class ReplySnake implements MessageReceivedListener {
     final Map<Integer,Future> replys = Maps.newConcurrentMap();
     final AtomicInteger counter = new AtomicInteger();
 
+    private int threads  = 16;
     private long readTimeoutMillis = 6000;
     private int heartbeatIntervalMillis = 15000;
     private boolean heartbeatEnable = true;
+    private boolean autoConnectRetry = true;
 
     private Snake snake ;
 
-    public synchronized void startup(String host,int port){
+    public int getThreads() {
+        return threads;
+    }
+
+    public void setThreads(int threads) {
+        this.threads = threads;
+    }
+
+    public boolean isAutoConnectRetry() {
+        return autoConnectRetry;
+    }
+
+    public void setAutoConnectRetry(boolean autoConnectRetry) {
+        this.autoConnectRetry = autoConnectRetry;
+    }
+
+    public synchronized void startup(String host, int port){
         if(snake != null){
             return;
         }
         SnakeBuilder builder = new SnakeBuilder();
         builder.host(host).port(port).messageReceivedListener(this).heartbeatEnable(heartbeatEnable).heartbeatInterval(heartbeatIntervalMillis);
+        builder.threads(threads).autoConnectRetry(autoConnectRetry);
         snake = builder.build();
         snake.startup();
-
         cleanService.scheduleWithFixedDelay(new FutureTimeoutClean(replys),15,15,TimeUnit.SECONDS);
     }
+
+
+    public boolean isAvailable(){
+        if(snake == null){
+            return false;
+        }
+        return snake.isAvailable();
+    }
+
 
     public void shutdown(){
         if(cleanService != null){
