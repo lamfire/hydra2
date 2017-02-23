@@ -7,6 +7,7 @@ public class ProviderConfig {
     private RpcSerializer serializer = HydraRPC.KRYO_SERIALIZER;
     private String host;
     private int port;
+    private long timeoutMillis = 6000;
 
     public ProviderConfig(String name){
         this.name = name;
@@ -50,5 +51,13 @@ public class ProviderConfig {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public long getTimeoutMillis() {
+        return timeoutMillis;
+    }
+
+    public void setTimeoutMillis(long timeoutMillis) {
+        this.timeoutMillis = timeoutMillis;
     }
 }

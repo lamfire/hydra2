@@ -5,13 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-9-18
- * Time: 上午10:33
- * To change this template use File | Settings | File Templates.
- */
 public class FutureTimeoutClean implements Runnable{
 
     private Map<Integer,Future> replys;

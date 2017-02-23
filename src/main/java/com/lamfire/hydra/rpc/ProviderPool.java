@@ -29,6 +29,7 @@ class ProviderPool {
                 }
                 RpcClientImpl c = new RpcClientImpl(config.getHost(), config.getPort());
                 c.setThreads(config.getThreads());
+                c.setTimeout(config.getTimeoutMillis());
                 c.startup();
                 clients.put(providerName, c);
                 client = c;

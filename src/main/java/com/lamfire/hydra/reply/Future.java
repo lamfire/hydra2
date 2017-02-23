@@ -4,13 +4,6 @@ import com.lamfire.hydra.Message;
 
 import java.util.concurrent.TimeoutException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-9-16
- * Time: 下午4:32
- * To change this template use File | Settings | File Templates.
- */
 public class Future {
     private final long createAt = System.currentTimeMillis();
     private Message response;
