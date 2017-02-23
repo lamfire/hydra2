@@ -22,7 +22,12 @@
         <dependency>
             <groupId>com.lamfire</groupId>
             <artifactId>lamfire</artifactId>
-            <version>2.3.15</version>
+            <version>2.3.24</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo-shaded</artifactId>
+            <version>4.0.0</version>
         </dependency>
     </dependencies>
 
