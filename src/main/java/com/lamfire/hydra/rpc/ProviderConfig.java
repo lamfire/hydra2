@@ -4,10 +4,11 @@ package com.lamfire.hydra.rpc;
 public class ProviderConfig {
     private String name;
     private int threads = 32;
-    private RpcSerializer serializer = HydraRPC.KRYO_SERIALIZER;
     private String host;
     private int port;
     private long timeoutMillis = 6000;
+
+    public ProviderConfig(){}
 
     public ProviderConfig(String name){
         this.name = name;
@@ -27,14 +28,6 @@ public class ProviderConfig {
 
     public void setThreads(int threads) {
         this.threads = threads;
-    }
-
-    public RpcSerializer getSerializer() {
-        return serializer;
-    }
-
-    public void setSerializer(RpcSerializer serializer) {
-        this.serializer = serializer;
     }
 
     public String getHost() {
@@ -59,5 +52,16 @@ public class ProviderConfig {
 
     public void setTimeoutMillis(long timeoutMillis) {
         this.timeoutMillis = timeoutMillis;
+    }
+
+    @Override
+    public String toString() {
+        return "ProviderConfig{" +
+                "name='" + name + '\'' +
+                ", threads=" + threads +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                ", timeoutMillis=" + timeoutMillis +
+                '}';
     }
 }

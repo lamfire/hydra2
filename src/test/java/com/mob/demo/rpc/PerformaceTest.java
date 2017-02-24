@@ -48,7 +48,6 @@ public class PerformaceTest implements Runnable{
         config.setHost("127.0.0.1");
         config.setPort(19800);
         config.setThreads(32);
-        config.setSerializer(new KryoSerializer());
 
 
         HydraRPC rpc = new HydraRPC();

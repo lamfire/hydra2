@@ -1,8 +1,6 @@
 package com.mob.demo.rpc;
 
-import com.lamfire.hydra.rpc.HydraRPC;
-import com.lamfire.hydra.rpc.KryoSerializer;
-import com.lamfire.hydra.rpc.ProviderConfig;
+import com.lamfire.hydra.rpc.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,12 +15,21 @@ public class RpcTest {
         config.setHost("127.0.0.1");
         config.setPort(19800);
         config.setThreads(32);
-        config.setSerializer(HydraRPC.KRYO_SERIALIZER);
 
+        DiscoveryConfig discovery = new DiscoveryConfig();
+        discovery.setGroupId("RPC_PROVIDER");
+        discovery.setGroupAddr(DiscoveryMultiCaster.DEFAULT_MULTI_CAST_ADDRESS);
+        discovery.setGroupPort(8888);
 
         HydraRPC rpc = new HydraRPC();
-        rpc.addProvider(config);
         rpc.setSerializer(new KryoSerializer());
+        rpc.setDiscoveryConfig(discovery);
+        rpc.startupDiscovery();
+
+        //rpc.addProvider(config);
+        if(!rpc.hashProvider()){
+            rpc.waitProvider();
+        }
 
 
         TestInterface t = rpc.lookup(TestInterface.class);
@@ -30,7 +37,7 @@ public class RpcTest {
 
         //System.out.println(t.div(10,2));
         try {
-            System.out.println(t.div(10, 0));
+            System.out.println(t.div(10, 1));
         }catch (Exception e){
             e.printStackTrace();
         }

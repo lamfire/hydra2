@@ -16,7 +16,9 @@ class ProviderPool {
 
     public void addProvider(ProviderConfig config){
         providers.put(config.getName(),config);
-        providerNames.add(config.getName());
+        if(!providerNames.contains(config.getName())) {
+            providerNames.add(config.getName());
+        }
     }
 
     public synchronized RpcClient getRpcClient(String providerName){
@@ -50,5 +52,9 @@ class ProviderPool {
             }
         }
         throw new RpcException("Not found available provider");
+    }
+
+    public boolean isEmpty(){
+        return providers.isEmpty();
     }
 }
