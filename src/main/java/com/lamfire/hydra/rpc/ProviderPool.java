@@ -50,6 +50,7 @@ class ProviderPool {
             if(c != null && c.isAvailable()){
                 return c;
             }
+            clients.remove(name);
         }
         throw new RpcException("Not found available provider");
     }
