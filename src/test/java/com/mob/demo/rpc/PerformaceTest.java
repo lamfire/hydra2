@@ -27,7 +27,7 @@ public class PerformaceTest implements Runnable{
 
     public void run(){
         String name = null;
-        for(int i=0;i<1000000;i++) {
+        for(int i=0;i<100000000;i++) {
             try{
                 name = (anInterface.getName());
                 monitor.done();

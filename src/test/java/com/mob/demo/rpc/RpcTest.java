@@ -26,6 +26,19 @@ public class RpcTest {
 
 
         TestInterface t = rpc.lookup(TestInterface.class);
-        System.out.println(t.getName());
+        //System.out.println(t.getName());
+
+        //System.out.println(t.div(10,2));
+        try {
+            System.out.println(t.div(10, 0));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        t.a();
+        t.a();
+        t.a();
+        t.a();
+        t.a();
     }
 }

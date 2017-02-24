@@ -9,7 +9,6 @@ public class RpcServer {
     private final RpcServerHandler handler = new RpcServerHandler();
     private String host = "0.0.0.0";
     private int port = 19800;
-    private RpcSerializer serializer = HydraRPC.KRYO_SERIALIZER;
     private ServiceRegistryConfig serviceRegistry;
     private int threads = 32;
 

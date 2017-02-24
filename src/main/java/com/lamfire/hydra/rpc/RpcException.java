@@ -1,6 +1,8 @@
 package com.lamfire.hydra.rpc;
 
-public class RpcException extends RuntimeException {
+import java.io.Serializable;
+
+public class RpcException extends RuntimeException implements Serializable {
 
     public RpcException(String message) {
         super(message);

@@ -1,11 +1,14 @@
 package com.lamfire.hydra.rpc;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
 
 public class KryoSerializer implements RpcSerializer {
+    static final int BUFFER_SIZE = 512;
+    static final int MAX_BUFFER_SIZE = 16 * 1024;
     private Kryo kryo = new Kryo();
 
     public KryoSerializer() {
@@ -15,9 +18,8 @@ public class KryoSerializer implements RpcSerializer {
 
     @Override
     public synchronized byte[] encode(Object obj) {
-        Output output = new Output(512);
+        ByteBufferOutput output = new ByteBufferOutput(BUFFER_SIZE,MAX_BUFFER_SIZE);
         try{
-
             kryo.writeClassAndObject(output, obj);
             return output.toBytes();
         } catch (Exception e) {

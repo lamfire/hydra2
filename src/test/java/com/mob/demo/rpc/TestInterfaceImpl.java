@@ -11,4 +11,14 @@ public class TestInterfaceImpl implements TestInterface{
     public String getName(){
         return "linfan";
     }
+
+    @Override
+    public int div(int value, int value1) {
+        return value / value1;
+    }
+
+    @Override
+    public void a() {
+        System.out.println("--------------------------------");
+    }
 }

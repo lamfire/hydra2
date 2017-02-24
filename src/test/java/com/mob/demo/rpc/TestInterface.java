@@ -9,4 +9,8 @@ package com.mob.demo.rpc;
  */
 public interface TestInterface {
     String getName();
+
+    int div(int value,int value1);
+
+    void a();
 }
