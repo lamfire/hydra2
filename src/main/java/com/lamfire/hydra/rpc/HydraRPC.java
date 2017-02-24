@@ -7,6 +7,8 @@ import java.net.InetAddress;
 
 public class HydraRPC implements DiscoveryListener{
     private static final Logger LOGGER = Logger.getLogger(HydraRPC.class);
+    public static final  String DEFAULT_DISCOVERY_ADDRESS = "224.0.0.224";
+    public static final  int DEFAULT_DISCOVERY_PORT = 6666;
     public static final RpcSerializer JAVA_SERIALIZER = new JavaSerializer();
     public static final RpcSerializer KRYO_SERIALIZER = new KryoSerializer();
 

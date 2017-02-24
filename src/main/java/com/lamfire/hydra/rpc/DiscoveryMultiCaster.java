@@ -10,7 +10,7 @@ import java.net.MulticastSocket;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class DiscoveryMultiCaster {
+class DiscoveryMultiCaster {
     private static final Logger LOGGER = Logger.getLogger(DiscoveryMultiCaster.class);
     public static final  String DEFAULT_MULTI_CAST_ADDRESS = "224.0.0.224";
     public static final  int DEFAULT_MULTI_CAST_PORT = 6666;

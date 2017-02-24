@@ -2,7 +2,7 @@ package com.lamfire.hydra.rpc;
 
 import java.io.Serializable;
 
-public class DiscoveryMessage implements Serializable {
+class DiscoveryMessage implements Serializable {
     public static final int TYPE_REQUEST = 0;
     public static final int TYPE_RESPONSE = 1;
     private int type;

@@ -18,7 +18,7 @@ public class RpcTest {
 
         DiscoveryConfig discovery = new DiscoveryConfig();
         discovery.setGroupId("RPC_PROVIDER");
-        discovery.setGroupAddr(DiscoveryMultiCaster.DEFAULT_MULTI_CAST_ADDRESS);
+        discovery.setGroupAddr(HydraRPC.DEFAULT_DISCOVERY_ADDRESS);
         discovery.setGroupPort(8888);
 
         HydraRPC rpc = new HydraRPC();

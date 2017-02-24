@@ -7,7 +7,7 @@ import com.lamfire.utils.Bytes;
 import java.net.DatagramPacket;
 
 
-public class DiscoveryHandler implements Runnable {
+class DiscoveryHandler implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(DiscoveryHandler.class);
     private DiscoveryMultiCaster multiCaster;
     private DiscoveryListener listener;

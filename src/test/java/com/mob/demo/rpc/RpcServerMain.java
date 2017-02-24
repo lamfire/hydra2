@@ -19,7 +19,7 @@ public class RpcServerMain {
         //设置并开启服务发现机制
         DiscoveryConfig discovery = new DiscoveryConfig();
         discovery.setGroupId("RPC_PROVIDER");
-        discovery.setGroupAddr(DiscoveryMultiCaster.DEFAULT_MULTI_CAST_ADDRESS);
+        discovery.setGroupAddr(HydraRPC.DEFAULT_DISCOVERY_ADDRESS);
         discovery.setGroupPort(8888);
         discovery.setProviderConfig(provider);
 

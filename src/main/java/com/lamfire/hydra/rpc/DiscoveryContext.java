@@ -3,14 +3,7 @@ package com.lamfire.hydra.rpc;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-9-1
- * Time: 上午9:50
- * To change this template use File | Settings | File Templates.
- */
-public class DiscoveryContext {
+class DiscoveryContext {
     private DiscoveryMultiCaster multiCaster;
     private DatagramPacket datagramPacket;
 
