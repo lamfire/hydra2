@@ -138,8 +138,8 @@ public class HydraRPC implements DiscoveryListener,RPC{
             if(dc != null && StringUtils.equals(dc.getGroupId(),this.discoveryConfig.getGroupId())) {
                 ProviderConfig pc = dc.getProviderConfig();
                 if (pc != null ) {
-                    this.addProvider(pc);
                     LOGGER.info("Add Provider from discovery : " + pc);
+                    this.addProvider(pc);
                 }
             }
         }

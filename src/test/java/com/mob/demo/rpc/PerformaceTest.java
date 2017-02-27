@@ -1,5 +1,6 @@
 package com.mob.demo.rpc;
 
+import com.lamfire.hydra.rpc.DiscoveryConfig;
 import com.lamfire.hydra.rpc.HydraRPC;
 import com.lamfire.hydra.rpc.ProviderConfig;
 import com.lamfire.utils.OPSMonitor;
@@ -26,15 +27,13 @@ public class PerformaceTest implements Runnable{
 
     public void run(){
         String name = null;
-        for(int i=0;i<100000000;i++) {
+        while(true) {
             try{
                 name = (anInterface.getName());
                 monitor.done();
             }catch (Exception e){}
 
         }
-
-        System.out.println(name);
     }
 
     public static void main(String[] args) {
@@ -43,15 +42,17 @@ public class PerformaceTest implements Runnable{
         monitor.startup();
 
 
-        ProviderConfig config = new ProviderConfig("1001");
-        config.setServiceAddr("127.0.0.1");
-        config.setPort(19800);
-        config.setThreads(32);
+        DiscoveryConfig discovery = new DiscoveryConfig();
+        discovery.setGroupId("RPC_PROVIDER");
+        discovery.setGroupAddr(HydraRPC.DEFAULT_DISCOVERY_ADDRESS);
+        discovery.setGroupPort(8888);
 
 
         HydraRPC rpc = new HydraRPC();
-        rpc.addProvider(config);
+        rpc.setDiscoveryConfig(discovery);
         rpc.setSerializer(HydraRPC.KRYO_SERIALIZER);
+        rpc.startupDiscovery();
+        rpc.waitProvider();
 
         TestInterface t = rpc.lookup(TestInterface.class);
         System.out.println(t.getName());

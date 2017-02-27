@@ -9,4 +9,8 @@ public interface RpcClient{
     public byte[] invoke(byte[] bytes) throws TimeoutException ;
 
     public boolean isAvailable();
+
+    public  void startup();
+
+    public void shutdown();
 }
