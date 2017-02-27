@@ -29,7 +29,7 @@ public class RpcServerMain {
         server.setSerializer(HydraRPC.KRYO_SERIALIZER);
         server.setDiscoveryConfig(discovery);
         server.setThreads(32);
-        //server.setEnableDiscovery(true);
+        server.setEnableDiscovery(true);
         server.startup();
     }
 }

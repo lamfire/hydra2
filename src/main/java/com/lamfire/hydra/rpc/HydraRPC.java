@@ -99,13 +99,15 @@ public class HydraRPC implements DiscoveryListener{
     @Override
     public void onDiscoveryMessage(DiscoveryContext context, byte[] message) {
         DiscoveryMessage dm = HydraRPC.KRYO_SERIALIZER.decode(message,DiscoveryMessage.class);
-        LOGGER.debug("onDiscoveryMessage -------------------------" + dm);
-        if(dm.getType() == DiscoveryMessage.TYPE_RESPONSE && StringUtils.equals(dm.getWhere(),this.discoveryConfig.getGroupId())){
+        //LOGGER.debug("onDiscoveryMessage -------------------------" + dm);
+        if(dm.getType() == DiscoveryMessage.TYPE_RESPONSE ){
             DiscoveryConfig dc = dm.getDiscoveryConfig();
-            ProviderConfig pc = dc.getProviderConfig();
-            if(pc != null){
-                this.addProvider(pc);
-                LOGGER.info("Add Provider from discovery : " + pc);
+            if(dc != null && StringUtils.equals(dc.getGroupId(),this.discoveryConfig.getGroupId())) {
+                ProviderConfig pc = dc.getProviderConfig();
+                if (pc != null ) {
+                    this.addProvider(pc);
+                    LOGGER.info("Add Provider from discovery : " + pc);
+                }
             }
         }
     }
