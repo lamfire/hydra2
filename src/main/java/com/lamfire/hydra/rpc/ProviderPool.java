@@ -45,7 +45,7 @@ class ProviderPool {
 
     public synchronized RpcClient getRpcClient(){
         for(int i=0;i<providerNames.size();i++){
-            String name = providerNames.getLast();
+            String name = providerNames.next();
             RpcClient c = getRpcClient(name);
             if(c != null && c.isAvailable()){
                 return c;

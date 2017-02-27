@@ -15,6 +15,14 @@ class RpcServerHandler implements MessageReceivedListener {
     private RpcSerializer serializer;
     private ServiceRegistryConfig serviceRegistry;
 
+    public RpcServerHandler(){
+
+    }
+
+    public RpcServerHandler(ServiceRegistryConfig serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
+    }
+
     public void setServiceRegistry(ServiceRegistryConfig serviceRegistry){
         this.serviceRegistry = serviceRegistry;
     }

@@ -1,5 +1,6 @@
 package com.lamfire.hydra.rpc;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,5 +18,9 @@ public class ServiceRegistryConfig {
 
     public int services() {
         return interfaces.size();
+    }
+
+    public Collection<Class<?>> getServiceClasses(){
+        return interfaces.keySet();
     }
 }
