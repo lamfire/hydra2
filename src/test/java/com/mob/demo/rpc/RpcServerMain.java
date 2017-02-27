@@ -13,6 +13,7 @@ public class RpcServerMain {
 
         ProviderConfig provider = new ProviderConfig("1001");
         provider.setServiceAddr("127.0.0.1");
+        provider.setBindAddr("0.0.0.0");
         provider.setPort(19800);
         provider.setThreads(64);
 

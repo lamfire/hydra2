@@ -9,7 +9,7 @@ import com.lamfire.hydra.rpc.*;
  * Time: 下午2:52
  * To change this template use File | Settings | File Templates.
  */
-public class RpcTest {
+public class RpcClientTest {
     public static void main(String[] args) {
         ProviderConfig config = new ProviderConfig("1001");
         config.setServiceAddr("127.0.0.1");

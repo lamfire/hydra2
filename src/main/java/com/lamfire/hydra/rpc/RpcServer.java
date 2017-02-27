@@ -5,8 +5,10 @@ import com.lamfire.logger.Logger;
 import com.lamfire.utils.StringUtils;
 
 import java.net.InetAddress;
+import java.util.Collection;
+import java.util.Set;
 
-public class RpcServer implements DiscoveryListener{
+public class RpcServer implements DiscoveryListener,RPC{
     private static final Logger LOGGER = Logger.getLogger(RpcServer.class);
     private Hydra hydra;
     private final RpcServerHandler handler = new RpcServerHandler();
@@ -65,6 +67,7 @@ public class RpcServer implements DiscoveryListener{
             startupDiscovery();
         }
 
+        serviceRegistry.registerService(RPC.class,this);
         handler.setServiceRegistry(serviceRegistry);
 
         if(handler.getSerializer() == null){
@@ -134,5 +137,10 @@ public class RpcServer implements DiscoveryListener{
                 LOGGER.error(e.getMessage(),e);
             }
         }
+    }
+
+    @Override
+    public Set<Class<?>> services() {
+        return this.serviceRegistry.getServiceClasses();
     }
 }

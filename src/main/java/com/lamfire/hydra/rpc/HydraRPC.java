@@ -4,8 +4,11 @@ import com.lamfire.logger.Logger;
 import com.lamfire.utils.StringUtils;
 
 import java.net.InetAddress;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-public class HydraRPC implements DiscoveryListener{
+public class HydraRPC implements DiscoveryListener,RPC{
     private static final Logger LOGGER = Logger.getLogger(HydraRPC.class);
     public static final  String DEFAULT_DISCOVERY_ADDRESS = "224.0.0.224";
     public static final  int DEFAULT_DISCOVERY_PORT = 6666;
@@ -16,6 +19,7 @@ public class HydraRPC implements DiscoveryListener{
     private DiscoveryMultiCaster discoveryMultiCaster;
     private final ProviderPool pool = new ProviderPool();
     private RpcSerializer serializer = HydraRPC.KRYO_SERIALIZER;
+    private final Set<Class<?>> services = new HashSet<Class<?>>();
 
     private boolean enableDiscovery = false;
 
@@ -33,6 +37,24 @@ public class HydraRPC implements DiscoveryListener{
     }
 
     public <T> T lookup(Class<?> interfaceClass){
+        Collection<Class<?>> services = services();
+        if(!services.contains(interfaceClass)){
+            throw new RpcException("RPC service not found : " + interfaceClass);
+        }
+        return createRpcProxy(interfaceClass);
+    }
+
+    @Override
+    public Set<Class<?>> services() {
+        if(!services.isEmpty()){
+            return services;
+        }
+        RPC rpc = createRpcProxy(RPC.class);
+        services.addAll(rpc.services());
+        return services;
+    }
+
+    private <T> T createRpcProxy(Class<?> interfaceClass){
         return ProxyManager.getProxy(interfaceClass,pool.getRpcClient(),serializer);
     }
 
