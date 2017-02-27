@@ -12,7 +12,7 @@ import com.lamfire.hydra.rpc.*;
 public class RpcTest {
     public static void main(String[] args) {
         ProviderConfig config = new ProviderConfig("1001");
-        config.setHost("127.0.0.1");
+        config.setServiceAddr("127.0.0.1");
         config.setPort(19800);
         config.setThreads(32);
 
@@ -23,8 +23,7 @@ public class RpcTest {
 
         HydraRPC rpc = new HydraRPC();
         rpc.setSerializer(new KryoSerializer());
-        rpc.setDiscoveryConfig(discovery);
-        rpc.startupDiscovery();
+        rpc.startupDiscovery(discovery);
 
         //rpc.addProvider(config);
         if(!rpc.hashProvider()){

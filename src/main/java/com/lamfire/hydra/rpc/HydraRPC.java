@@ -37,6 +37,17 @@ public class HydraRPC implements DiscoveryListener{
     }
 
     public void startupDiscovery(){
+        if(this.discoveryConfig == null){
+            throw new RuntimeException("Not found DiscoveryConfig ,please use 'setDiscoveryConfig' to setting");
+        }
+        startupDiscovery(this.discoveryConfig);
+    }
+
+    public void startupDiscovery(DiscoveryConfig discoveryConfig){
+        if(discoveryConfig == null){
+            throw new IllegalArgumentException("The arg 'iscoveryConfig' cannot be 'null'");
+        }
+        this.discoveryConfig = discoveryConfig;
         try {
             discoveryMultiCaster = new DiscoveryMultiCaster(InetAddress.getByName(discoveryConfig.getGroupAddr()), discoveryConfig.getGroupPort());
             discoveryMultiCaster.setOnMessageListener(this);

@@ -10,12 +10,10 @@ public class RpcServer implements DiscoveryListener{
     private static final Logger LOGGER = Logger.getLogger(RpcServer.class);
     private Hydra hydra;
     private final RpcServerHandler handler = new RpcServerHandler();
+    private ProviderConfig providerConfig;
     private DiscoveryConfig discoveryConfig;
     private DiscoveryMultiCaster discoveryMultiCaster;
-    private String host = "0.0.0.0";
-    private int port = 19800;
     private ServiceRegistryConfig serviceRegistry;
-    private int threads = 32;
     private boolean enableDiscovery = false;
 
     public DiscoveryConfig getDiscoveryConfig() {
@@ -34,46 +32,30 @@ public class RpcServer implements DiscoveryListener{
         this.discoveryConfig = discoveryConfig;
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     public void setServiceRegistry(ServiceRegistryConfig serviceRegistry){
         this.serviceRegistry = serviceRegistry;
     }
 
-    public void setThreads(int threads) {
-        this.threads = threads;
-    }
 
     public void setSerializer(RpcSerializer serializer) {
         handler.setSerializer(serializer);
     }
 
     public void setProviderConfig(ProviderConfig config){
-        this.setHost(config.getHost());
-        this.setPort(config.getPort());
-        this.setThreads(config.getThreads());
+        this.providerConfig = config;
     }
 
     public synchronized void startup() {
         if(hydra != null){
             return;
         }
+
+        if(providerConfig == null){
+            throw new RuntimeException("Not found ProviderConfig ,please use 'setProviderConfig' to setting");
+        }
+
         HydraBuilder builder = new HydraBuilder();
-        builder.bind(host).port(port).threads(threads);
+        builder.bind(providerConfig.getBindAddr()).port(providerConfig.getPort()).threads(providerConfig.getThreads());
 
         if(serviceRegistry == null || serviceRegistry.services() == 0){
             throw new RuntimeException("Not service has be exported");
@@ -101,7 +83,7 @@ public class RpcServer implements DiscoveryListener{
         hydra = builder.build();
         hydra.startup();
 
-        LOGGER.info("server startup on - " + host +":" + port);
+        LOGGER.info("server startup on - " + providerConfig);
     }
 
     public synchronized void shutdown(){
@@ -112,6 +94,9 @@ public class RpcServer implements DiscoveryListener{
     }
 
     private void startupDiscovery(){
+        if(discoveryConfig == null) {
+            throw new RuntimeException("Not found DiscoveryConfig ,please use 'setDiscoveryConfig' to setting");
+        }
         try {
             discoveryMultiCaster = new DiscoveryMultiCaster(InetAddress.getByName(discoveryConfig.getGroupAddr()), discoveryConfig.getGroupPort());
             discoveryMultiCaster.setOnMessageListener(this);
@@ -138,7 +123,7 @@ public class RpcServer implements DiscoveryListener{
     @Override
     public void onDiscoveryMessage(DiscoveryContext context, byte[] message) {
         DiscoveryMessage dm = HydraRPC.KRYO_SERIALIZER.decode(message,DiscoveryMessage.class);
-        LOGGER.debug("onDiscoveryMessage - " + dm);
+        //LOGGER.debug("onDiscoveryMessage - " + dm);
         if(dm.getType() == DiscoveryMessage.TYPE_REQUEST && StringUtils.equals(dm.getWhere(),this.discoveryConfig.getGroupId())){
             dm.setDiscoveryConfig(this.discoveryConfig);
             dm.setType(DiscoveryMessage.TYPE_RESPONSE);

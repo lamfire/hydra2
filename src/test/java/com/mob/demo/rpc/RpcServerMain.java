@@ -12,7 +12,7 @@ public class RpcServerMain {
         serviceRegistry.registerService(TestInterface.class,new TestInterfaceImpl());
 
         ProviderConfig provider = new ProviderConfig("1001");
-        provider.setHost("127.0.0.1");
+        provider.setServiceAddr("127.0.0.1");
         provider.setPort(19800);
         provider.setThreads(64);
 
@@ -28,7 +28,6 @@ public class RpcServerMain {
         server.setServiceRegistry(serviceRegistry);
         server.setSerializer(HydraRPC.KRYO_SERIALIZER);
         server.setDiscoveryConfig(discovery);
-        server.setThreads(32);
         server.setEnableDiscovery(true);
         server.startup();
     }

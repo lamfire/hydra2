@@ -29,7 +29,7 @@ class ProviderPool {
                 if (config == null) {
                     throw new RpcException("The provider not found - " + providerName);
                 }
-                RpcClientImpl c = new RpcClientImpl(config.getHost(), config.getPort());
+                RpcClientImpl c = new RpcClientImpl(config.getServiceAddr(), config.getPort());
                 c.setThreads(config.getThreads());
                 c.setTimeout(config.getTimeoutMillis());
                 c.startup();

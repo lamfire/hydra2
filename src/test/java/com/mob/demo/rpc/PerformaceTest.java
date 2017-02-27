@@ -1,7 +1,6 @@
 package com.mob.demo.rpc;
 
 import com.lamfire.hydra.rpc.HydraRPC;
-import com.lamfire.hydra.rpc.KryoSerializer;
 import com.lamfire.hydra.rpc.ProviderConfig;
 import com.lamfire.utils.OPSMonitor;
 
@@ -45,7 +44,7 @@ public class PerformaceTest implements Runnable{
 
 
         ProviderConfig config = new ProviderConfig("1001");
-        config.setHost("127.0.0.1");
+        config.setServiceAddr("127.0.0.1");
         config.setPort(19800);
         config.setThreads(32);
 

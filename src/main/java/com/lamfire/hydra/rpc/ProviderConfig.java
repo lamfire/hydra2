@@ -4,8 +4,9 @@ package com.lamfire.hydra.rpc;
 public class ProviderConfig {
     private String name;
     private int threads = 32;
-    private String host;
-    private int port;
+    private String serviceAddr;
+    private String bindAddr = "0.0.0.0";
+    private int port = 19800;
     private long timeoutMillis = 6000;
 
     public ProviderConfig(){}
@@ -30,12 +31,12 @@ public class ProviderConfig {
         this.threads = threads;
     }
 
-    public String getHost() {
-        return host;
+    public String getServiceAddr() {
+        return serviceAddr;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setServiceAddr(String serviceAddr) {
+        this.serviceAddr = serviceAddr;
     }
 
     public int getPort() {
@@ -54,12 +55,21 @@ public class ProviderConfig {
         this.timeoutMillis = timeoutMillis;
     }
 
+    public String getBindAddr() {
+        return bindAddr;
+    }
+
+    public void setBindAddr(String bindAddr) {
+        this.bindAddr = bindAddr;
+    }
+
     @Override
     public String toString() {
         return "ProviderConfig{" +
                 "name='" + name + '\'' +
                 ", threads=" + threads +
-                ", host='" + host + '\'' +
+                ", serviceAddr='" + serviceAddr + '\'' +
+                ", bindAddr='" + bindAddr + '\'' +
                 ", port=" + port +
                 ", timeoutMillis=" + timeoutMillis +
                 '}';
