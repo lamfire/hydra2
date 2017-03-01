@@ -27,7 +27,7 @@ public class RpcServerMain {
         RpcServer server = new RpcServer();
         server.setProvider(provider);
         server.setServiceRegistry(serviceRegistry);
-        server.setSerializer(new KryoSerializer(10 * 1024 * 1024));
+        //server.setSerializer(new KryoSerializer(10 * 1024 * 1024));
         server.setDiscovery(discovery);
         server.setDiscoveryEnable(true);
         server.startup();

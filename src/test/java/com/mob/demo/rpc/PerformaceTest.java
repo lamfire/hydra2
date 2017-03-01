@@ -48,7 +48,7 @@ public class PerformaceTest implements Runnable{
 
         HydraRPC rpc = new HydraRPC();
         rpc.setDiscoveryConfig(discovery);
-        rpc.setSerializer(new KryoSerializer(10 * 1024 * 1024));
+        //rpc.setSerializer(new KryoSerializer(10 * 1024 * 1024));
         rpc.startupDiscovery();
         rpc.waitProviders();
 

@@ -24,7 +24,7 @@ public class RpcClientTest {
         discovery.setGroupPort(8888);
 
         HydraRPC rpc = new HydraRPC();
-        rpc.setSerializer(new KryoSerializer(10 * 1024 * 1024));
+        //rpc.setSerializer(new KryoSerializer(10 * 1024 * 1024));
         rpc.startupDiscovery(discovery);
 
         //rpc.addProvider(config);

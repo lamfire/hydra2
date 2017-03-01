@@ -7,8 +7,8 @@ import com.esotericsoftware.kryo.io.Output;
 
 
 public class KryoSerializer implements RpcSerializer {
-    static final int BUFFER_SIZE = 64;
-    static final int MAX_BUFFER_SIZE = 64 * 1024;
+    static final int BUFFER_SIZE = 1024;
+    static final int MAX_BUFFER_SIZE = 1024 * 1024 * 2; //2MB
     private Kryo kryo = new Kryo();
 
     private int maxBuffer = MAX_BUFFER_SIZE;
