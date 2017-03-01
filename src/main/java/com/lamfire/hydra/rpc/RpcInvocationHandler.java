@@ -7,12 +7,12 @@ import java.lang.reflect.Method;
 class RpcInvocationHandler implements InvocationHandler {
     private final Class<?> interfaceClass;
     private Invoker invoker;
-    private RpcClient client;
+    private ProviderPool pool;
 
-    public RpcInvocationHandler(Class<?> interfaceClass, Invoker invoker, RpcClient client){
+    public RpcInvocationHandler(Class<?> interfaceClass, Invoker invoker, ProviderPool pool){
         this.interfaceClass = interfaceClass;
         this.invoker = invoker;
-        this.client = client;
+        this.pool = pool;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -38,7 +38,7 @@ class RpcInvocationHandler implements InvocationHandler {
         message.setParameters(args);
         message.setReturnType(returnType);
 
-        Object result = invoker.invoke(message,client);
+        Object result = invoker.invoke(message,pool.getRpcClient());
         if(result instanceof Throwable){
             throw (Throwable) result;
         }

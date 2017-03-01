@@ -8,7 +8,7 @@ import java.util.concurrent.TimeoutException;
 class RpcClientImpl implements RpcClient {
     private String host;
     private int port;
-    private long timeout = 6000l;
+    private long timeout = 15000l;
     private int threads = 16;
 
     public String getHost() {
@@ -59,15 +59,20 @@ class RpcClientImpl implements RpcClient {
         snake.setHeartbeatEnable(true);
         snake.setAutoConnectRetry(true);
         snake.startup(host,port);
-
+        snake.waitSessionCreated();
     }
 
     public void shutdown(){
-        snake.shutdown();
-        snake = null;
+        if(snake!= null) {
+            snake.shutdown();
+            snake = null;
+        }
     }
 
     public byte[] invoke(byte[] bytes) throws TimeoutException {
+        if(snake == null){
+           throw new RpcException("RPC client cannot available");
+        }
         Future f = snake.send(bytes);
         return f.getResponse();
     }

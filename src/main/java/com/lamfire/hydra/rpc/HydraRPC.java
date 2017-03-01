@@ -1,11 +1,13 @@
 package com.lamfire.hydra.rpc;
 
 import com.lamfire.logger.Logger;
+import com.lamfire.utils.Maps;
 import com.lamfire.utils.StringUtils;
 
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class HydraRPC implements DiscoveryListener,RPC{
@@ -15,7 +17,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
     private final ProviderPool pool = new ProviderPool();
     private RpcSerializer serializer = Serials.DEFAULT_SERIALIZER;
     private final Set<Class<?>> services = new HashSet<Class<?>>();
-
+    private final Map<Class<?>,Object> interfaceProxyInstances = Maps.newHashMap();
     private boolean enableDiscovery = false;
 
     public synchronized void addProvider(ProviderConfig config){
@@ -41,16 +43,23 @@ public class HydraRPC implements DiscoveryListener,RPC{
         this.discoveryConfig = discoveryConfig;
     }
 
-    public <T> T lookup(Class<?> interfaceClass){
+    public synchronized  <T> T lookup(Class<?> interfaceClass){
+        Object instance = interfaceProxyInstances.get(interfaceClass);
+        if(instance != null) {
+            return (T)instance;
+        }
         Collection<Class<?>> services = services();
         if(!services.contains(interfaceClass)){
             throw new RpcException("RPC service not found : " + interfaceClass);
         }
-        return createRpcProxy(interfaceClass);
+
+        instance = createRpcProxy(interfaceClass);
+        interfaceProxyInstances.put(interfaceClass,instance);
+        return (T)instance;
     }
 
     @Override
-    public Set<Class<?>> services() {
+    public synchronized Set<Class<?>> services() {
         if(!services.isEmpty()){
             return services;
         }
@@ -60,7 +69,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
     }
 
     private <T> T createRpcProxy(Class<?> interfaceClass){
-        return ProxyManager.getProxy(interfaceClass,pool.getRpcClient(),serializer);
+        return ProxyManager.getProxy(interfaceClass,pool,serializer);
     }
 
     public void startupDiscovery(){

@@ -7,6 +7,8 @@ import com.lamfire.utils.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 class ProviderPool {
     private static final Logger LOGGER = Logger.getLogger(ProviderPool.class);
@@ -14,14 +16,22 @@ class ProviderPool {
     private final Map<String,RpcClient> clients = new HashMap<String, RpcClient>();
     private final CircularLinkedList<String> providerNames = new CircularLinkedList<String>();
 
+    private final Lock lock = new ReentrantLock();
+
     public synchronized void addProvider(ProviderConfig config){
-        String providerName = config.getName();
-        ProviderConfig old = providers.get(providerName);
-        if(old != null){
-            replaceProvider(config);
-            return;
+        try {
+            lock.lock();
+            String providerName = config.getName();
+            ProviderConfig old = providers.get(providerName);
+            if (old != null) {
+                replaceProvider(config);
+            }else {
+                addNewProvider(config);
+            }
+            getOrCreateRpcClient(providerName);
+        }finally {
+            lock.unlock();
         }
-        addNewProvider(config);
     }
 
     private synchronized void addNewProvider(ProviderConfig config){
@@ -34,6 +44,7 @@ class ProviderPool {
     }
 
     private synchronized void replaceProvider(ProviderConfig config){
+        LOGGER.info("replace provider : "  +config);
         String providerName = config.getName();
         ProviderConfig old = providers.get(providerName);
         providers.put(providerName,config);
@@ -47,17 +58,17 @@ class ProviderPool {
 
 
         //替换client
-        RpcClient client = clients.get(config.getName());
+        RpcClient client = clients.remove(config.getName());
         if(client != null){
-            clients.remove(config.getName());
             LOGGER.info("shutdown old provider client");
             client.shutdown();
         }
     }
 
-    public synchronized RpcClient getRpcClient(String providerName){
+    private synchronized RpcClient getOrCreateRpcClient(String providerName){
+        RpcClient client = clients.get(providerName);
         try {
-            RpcClient client = clients.get(providerName);
+            lock.lock();
             if (client == null) {
                 ProviderConfig config = providers.get(providerName);
                 if (config == null) {
@@ -70,23 +81,34 @@ class ProviderPool {
                 clients.put(providerName, c);
                 client = c;
             }
-            return client;
         }catch (Throwable e){
             LOGGER.error(e.getMessage(),e);
+        }finally {
+            lock.unlock();
         }
-        return null;
+        return client;
+    }
+
+
+    private RpcClient getNextRpcClient(){
+        String name = providerNames.next();
+        RpcClient c = getOrCreateRpcClient(name);
+        return c;
     }
 
     public synchronized RpcClient getRpcClient(){
-        for(int i=0;i<providerNames.size();i++){
-            String name = providerNames.next();
-            RpcClient c = getRpcClient(name);
-            if(c != null && c.isAvailable()){
-                return c;
+        try {
+            lock.lock();
+            for (int i = 0; i < providerNames.size(); i++) {
+                RpcClient c = getNextRpcClient();
+                if (c != null && c.isAvailable()) {
+                    return c;
+                }
             }
-            clients.remove(name);
+            throw new RpcException("Not found available RpcClient");
+        }finally {
+            lock.unlock();
         }
-        throw new RpcException("Not found available provider");
     }
 
     public boolean isEmpty(){

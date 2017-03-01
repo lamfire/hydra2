@@ -16,14 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-12
- * Time: 上午11:07
- * To change this template use File | Settings | File Templates.
- */
-public class NettyClient implements Snake {
+public class NettyClient implements Snake,SessionCreatedListener {
     private static final Logger LOGGER = Logger.getLogger(NettyClient.class);
     private final NettySessionMgr mgr = new NettySessionMgr();
     private MessageReceivedListener messageReceivedListener;
@@ -37,7 +30,7 @@ public class NettyClient implements Snake {
     private int heartbeatInterval = 15000;
     private HeartbeatListener heartbeatListener;
     private boolean autoConnectRetry = false;
-
+    private int connectionTimeout = 15000;
     private String host;
     private int port = 1980;
     private int workerThreads = 16;
@@ -97,8 +90,8 @@ public class NettyClient implements Snake {
 
     public synchronized void startup() {
         if(bootstrap != null){
-            LOGGER.error("Bootstrap was running,system shutdown now...");
-            System.exit(-1);
+            LOGGER.error("Bootstrap was running,ignore...");
+            return;
         }
         workerGroup = new NioEventLoopGroup(workerThreads, Threads.makeThreadFactory("Hydra/worker"));
         try {
@@ -111,37 +104,40 @@ public class NettyClient implements Snake {
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
                             ch.pipeline().addLast(new HydraMessageEncoder());
                             ch.pipeline().addLast(new HydraMessageDecoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener,sessionCreatedListener,sessionClosedListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener,NettyClient.this,sessionClosedListener));
                         }
                     });
 
             bootstrap.connect(host,port).sync();
-            while(mgr.all().isEmpty()){
-                Threads.sleep(1);
-            }
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
-            LOGGER.error("Shutdown now...");
-            shutdown();
-            System.exit(-1);
         }
-
         //startup heartbeat
+        startupHeartbeat();
+    }
+
+    private void startupHeartbeat(){
         if(heartbeatEnable && heartbeatService == null){
             heartbeatService = Executors.newSingleThreadScheduledExecutor(Threads.makeThreadFactory("Hydra/heartbeat"));
             heartbeatService.scheduleWithFixedDelay(heartbeat,heartbeatInterval,heartbeatInterval, TimeUnit.MILLISECONDS);
         }
     }
 
-    void connect(){
+    public synchronized void waitSessionCreated(){
+        if(mgr.isEmpty()){
+            try {
+                this.wait(connectionTimeout);
+            }catch (Throwable t){
+
+            }
+        }
+    }
+
+    ChannelFuture connect(){
         if(bootstrap == null){
             throw new RuntimeException("The client not startup.");
         }
-        try{
-            bootstrap.connect(host,port).sync();
-        }catch (Throwable t){
-            LOGGER.error(t.getMessage(),t);
-        }
+        return bootstrap.connect(host,port);
     }
 
     public synchronized void shutdown(){
@@ -222,4 +218,12 @@ public class NettyClient implements Snake {
             }
         }
     };
+
+    @Override
+    public synchronized void onCreated(Session session) {
+        if(this.sessionCreatedListener != null){
+            this.sessionCreatedListener.onCreated(session);
+        }
+        this.notifyAll();
+    }
 }

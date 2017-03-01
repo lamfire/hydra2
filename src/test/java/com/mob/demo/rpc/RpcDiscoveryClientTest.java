@@ -4,6 +4,7 @@ import com.lamfire.hydra.rpc.DiscoveryConfig;
 import com.lamfire.hydra.rpc.HydraRPC;
 import com.lamfire.hydra.rpc.KryoSerializer;
 import com.lamfire.hydra.rpc.ProviderConfig;
+import com.lamfire.utils.Threads;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,14 +30,20 @@ public class RpcDiscoveryClientTest {
         }
 
 
+
         TestInterface t = rpc.lookup(TestInterface.class);
         System.out.println(t.getName());
+
+        Threads.sleep(2000);
         System.out.println(t.div(10,2));
-        try {
-            System.out.println(t.div(10, 1));
-        }catch (Exception e){
-            e.printStackTrace();
+
+        while(true) {
+            try {
+                System.out.println(t.div(10, 1));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Threads.sleep(1000);
         }
-        t.a();
     }
 }
