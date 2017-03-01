@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class TestInterfaceImpl implements TestInterface{
     public String getName(){
-        System.out.println("getName()");
+        //System.out.println("getName()");
         return "linfan";
     }
 
     @Override
     public int div(int value, int value1) {
-        System.out.println("div(int value, int value1)");
+        //System.out.println("div(int value, int value1)");
         return value / value1;
     }
 

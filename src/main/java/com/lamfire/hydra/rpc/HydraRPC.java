@@ -98,19 +98,23 @@ public class HydraRPC implements DiscoveryListener,RPC{
         return !this.pool.isEmpty();
     }
 
-    public synchronized void waitProvider(long timeMillis){
-        try {
-            this.wait(timeMillis);
-        }catch (Exception e){
+    public synchronized void waitProviders(long timeMillis){
+        if(pool.isEmpty()) {
+            try {
+                this.wait(timeMillis);
+            } catch (Exception e) {
 
+            }
         }
     }
 
     public synchronized void waitProviders(){
-        try {
-            this.wait();
-        }catch (Exception e){
+        if(pool.isEmpty()) {
+            try {
+                this.wait();
+            } catch (Exception e) {
 
+            }
         }
     }
 
