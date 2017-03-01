@@ -30,7 +30,7 @@ public class TestInterfaceImpl implements TestInterface{
     @Override
     public List<String> getList() {
         List<String> list = Lists.newArrayList();
-        for(int i=0;i<10000;i++){
+        for(int i=0;i<1000;i++){
             list.add(RandomUtils.randomText(50,200));
         }
         return list;
