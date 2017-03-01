@@ -1,5 +1,7 @@
 package com.mob.demo.rpc;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: linfan
@@ -13,4 +15,6 @@ public interface TestInterface {
     int div(int value,int value1);
 
     void a();
+
+    List<String> getList();
 }

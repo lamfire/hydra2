@@ -1,7 +1,9 @@
 package com.lamfire.hydra.rpc;
 
 
-public class ProviderConfig {
+import java.io.Serializable;
+
+public class ProviderConfig implements Serializable{
     private String name;
     private int threads = 32;
     private String serviceAddr;

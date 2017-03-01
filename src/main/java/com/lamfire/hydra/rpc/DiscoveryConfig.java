@@ -3,6 +3,8 @@ package com.lamfire.hydra.rpc;
 import java.io.Serializable;
 
 public class DiscoveryConfig implements Serializable{
+    public static final  String DEFAULT_DISCOVERY_ADDRESS = "224.0.0.224";
+    public static final  int DEFAULT_DISCOVERY_PORT = 6666;
     private String groupId;
     private String groupAddr;
     private int groupPort;

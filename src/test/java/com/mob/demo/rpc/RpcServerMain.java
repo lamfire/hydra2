@@ -20,16 +20,16 @@ public class RpcServerMain {
         //设置并开启服务发现机制
         DiscoveryConfig discovery = new DiscoveryConfig();
         discovery.setGroupId("RPC_PROVIDER");
-        discovery.setGroupAddr(HydraRPC.DEFAULT_DISCOVERY_ADDRESS);
+        discovery.setGroupAddr(DiscoveryConfig.DEFAULT_DISCOVERY_ADDRESS);
         discovery.setGroupPort(8888);
         discovery.setProviderConfig(provider);
 
         RpcServer server = new RpcServer();
-        server.setProviderConfig(provider);
+        server.setProvider(provider);
         server.setServiceRegistry(serviceRegistry);
-        server.setSerializer(HydraRPC.KRYO_SERIALIZER);
-        server.setDiscoveryConfig(discovery);
-        server.setEnableDiscovery(true);
+        server.setSerializer(new KryoSerializer(10 * 1024 * 1024));
+        server.setDiscovery(discovery);
+        server.setDiscoveryEnable(true);
         server.startup();
     }
 }

@@ -24,8 +24,8 @@ public class RpcProviderClientTest {
         rpc.addProvider(provider);
 
         //rpc.addProvider(config);
-        if(!rpc.hashProvider()){
-            rpc.waitProvider();
+        if(!rpc.hashProviders()){
+            rpc.waitProviders();
         }
 
 

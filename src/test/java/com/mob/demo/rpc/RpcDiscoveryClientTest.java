@@ -16,7 +16,7 @@ public class RpcDiscoveryClientTest {
     public static void main(String[] args) {
         DiscoveryConfig discovery = new DiscoveryConfig();
         discovery.setGroupId("RPC_PROVIDER");
-        discovery.setGroupAddr(HydraRPC.DEFAULT_DISCOVERY_ADDRESS);
+        discovery.setGroupAddr(DiscoveryConfig.DEFAULT_DISCOVERY_ADDRESS);
         discovery.setGroupPort(8888);
 
         HydraRPC rpc = new HydraRPC();
@@ -24,8 +24,8 @@ public class RpcDiscoveryClientTest {
         rpc.startupDiscovery(discovery);
 
         //rpc.addProvider(config);
-        if(!rpc.hashProvider()){
-            rpc.waitProvider();
+        if(!rpc.hashProviders()){
+            rpc.waitProviders();
         }
 
 

@@ -1,5 +1,10 @@
 package com.mob.demo.rpc;
 
+import com.lamfire.utils.Lists;
+import com.lamfire.utils.RandomUtils;
+
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: linfan
@@ -20,5 +25,14 @@ public class TestInterfaceImpl implements TestInterface{
     @Override
     public void a() {
         System.out.println("--------------------------------");
+    }
+
+    @Override
+    public List<String> getList() {
+        List<String> list = Lists.newArrayList();
+        for(int i=0;i<10000;i++){
+            list.add(RandomUtils.randomText(50,200));
+        }
+        return list;
     }
 }

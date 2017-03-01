@@ -5,7 +5,6 @@ import com.lamfire.logger.Logger;
 import com.lamfire.utils.StringUtils;
 
 import java.net.InetAddress;
-import java.util.Collection;
 import java.util.Set;
 
 public class RpcServer implements DiscoveryListener,RPC{
@@ -16,21 +15,22 @@ public class RpcServer implements DiscoveryListener,RPC{
     private DiscoveryConfig discoveryConfig;
     private DiscoveryMultiCaster discoveryMultiCaster;
     private ServiceRegistryConfig serviceRegistry;
-    private boolean enableDiscovery = false;
+    private boolean discoveryEnable = false;
+    private RpcSerializer serializer = Serials.DEFAULT_SERIALIZER;
 
     public DiscoveryConfig getDiscoveryConfig() {
         return discoveryConfig;
     }
 
-    public boolean isEnableDiscovery() {
-        return enableDiscovery;
+    public boolean isDiscoveryEnable() {
+        return discoveryEnable;
     }
 
-    public void setEnableDiscovery(boolean enableDiscovery) {
-        this.enableDiscovery = enableDiscovery;
+    public void setDiscoveryEnable(boolean discoveryEnable) {
+        this.discoveryEnable = discoveryEnable;
     }
 
-    public void setDiscoveryConfig(DiscoveryConfig discoveryConfig) {
+    public void setDiscovery(DiscoveryConfig discoveryConfig) {
         this.discoveryConfig = discoveryConfig;
     }
 
@@ -40,10 +40,11 @@ public class RpcServer implements DiscoveryListener,RPC{
 
 
     public void setSerializer(RpcSerializer serializer) {
+        this.serializer = serializer;
         handler.setSerializer(serializer);
     }
 
-    public void setProviderConfig(ProviderConfig config){
+    public void setProvider(ProviderConfig config){
         this.providerConfig = config;
     }
 
@@ -63,7 +64,7 @@ public class RpcServer implements DiscoveryListener,RPC{
             throw new RuntimeException("Not service has be exported");
         }
 
-        if(enableDiscovery){
+        if(discoveryEnable){
             startupDiscovery();
         }
 
@@ -71,7 +72,8 @@ public class RpcServer implements DiscoveryListener,RPC{
         handler.setServiceRegistry(serviceRegistry);
 
         if(handler.getSerializer() == null){
-            setSerializer(new KryoSerializer());
+            this.serializer = Serials.DEFAULT_SERIALIZER;
+            setSerializer(this.serializer);
         }
 
         builder.messageReceivedListener(handler);
@@ -117,7 +119,7 @@ public class RpcServer implements DiscoveryListener,RPC{
         dm.setDiscoveryConfig(discoveryConfig);
         dm.setId(0);
         try {
-            discoveryMultiCaster.send(HydraRPC.KRYO_SERIALIZER.encode(dm));
+            discoveryMultiCaster.send(this.serializer.encode(dm));
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
         }
@@ -125,14 +127,13 @@ public class RpcServer implements DiscoveryListener,RPC{
 
     @Override
     public void onDiscoveryMessage(DiscoveryContext context, byte[] message) {
-        DiscoveryMessage dm = HydraRPC.KRYO_SERIALIZER.decode(message,DiscoveryMessage.class);
-        //LOGGER.debug("onDiscoveryMessage - " + dm);
+        DiscoveryMessage dm = this.serializer.decode(message,DiscoveryMessage.class);
         if(dm.getType() == DiscoveryMessage.TYPE_REQUEST && StringUtils.equals(dm.getWhere(),this.discoveryConfig.getGroupId())){
             dm.setDiscoveryConfig(this.discoveryConfig);
             dm.setType(DiscoveryMessage.TYPE_RESPONSE);
             try {
                 LOGGER.debug("Sending DiscoveryMessage - " + dm);
-                discoveryMultiCaster.send(HydraRPC.KRYO_SERIALIZER.encode(dm));
+                discoveryMultiCaster.send(this.serializer.encode(dm));
             }catch (Exception e){
                 LOGGER.error(e.getMessage(),e);
             }

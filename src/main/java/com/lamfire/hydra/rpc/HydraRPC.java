@@ -10,15 +10,10 @@ import java.util.Set;
 
 public class HydraRPC implements DiscoveryListener,RPC{
     private static final Logger LOGGER = Logger.getLogger(HydraRPC.class);
-    public static final  String DEFAULT_DISCOVERY_ADDRESS = "224.0.0.224";
-    public static final  int DEFAULT_DISCOVERY_PORT = 6666;
-    public static final RpcSerializer JAVA_SERIALIZER = new JavaSerializer();
-    public static final RpcSerializer KRYO_SERIALIZER = new KryoSerializer();
-
     private DiscoveryConfig discoveryConfig;
     private DiscoveryMultiCaster discoveryMultiCaster;
     private final ProviderPool pool = new ProviderPool();
-    private RpcSerializer serializer = HydraRPC.KRYO_SERIALIZER;
+    private RpcSerializer serializer = Serials.DEFAULT_SERIALIZER;
     private final Set<Class<?>> services = new HashSet<Class<?>>();
 
     private boolean enableDiscovery = false;
@@ -80,7 +75,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
         }
     }
 
-    public boolean hashProvider(){
+    public boolean hashProviders(){
         return !this.pool.isEmpty();
     }
 
@@ -92,7 +87,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
         }
     }
 
-    public synchronized void waitProvider(){
+    public synchronized void waitProviders(){
         try {
             this.wait();
         }catch (Exception e){
@@ -107,7 +102,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
         dm.setId(0);
         dm.setWhere(discoveryConfig.getGroupId());
         try {
-            discoveryMultiCaster.send(HydraRPC.KRYO_SERIALIZER.encode(dm));
+            discoveryMultiCaster.send(serializer.encode(dm));
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
         }
@@ -131,7 +126,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
 
     @Override
     public void onDiscoveryMessage(DiscoveryContext context, byte[] message) {
-        DiscoveryMessage dm = HydraRPC.KRYO_SERIALIZER.decode(message,DiscoveryMessage.class);
+        DiscoveryMessage dm = serializer.decode(message,DiscoveryMessage.class);
         //LOGGER.debug("onDiscoveryMessage -------------------------" + dm);
         if(dm.getType() == DiscoveryMessage.TYPE_RESPONSE ){
             DiscoveryConfig dc = dm.getDiscoveryConfig();

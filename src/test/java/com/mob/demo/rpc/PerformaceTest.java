@@ -1,8 +1,6 @@
 package com.mob.demo.rpc;
 
-import com.lamfire.hydra.rpc.DiscoveryConfig;
-import com.lamfire.hydra.rpc.HydraRPC;
-import com.lamfire.hydra.rpc.ProviderConfig;
+import com.lamfire.hydra.rpc.*;
 import com.lamfire.utils.OPSMonitor;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -44,15 +42,15 @@ public class PerformaceTest implements Runnable{
 
         DiscoveryConfig discovery = new DiscoveryConfig();
         discovery.setGroupId("RPC_PROVIDER");
-        discovery.setGroupAddr(HydraRPC.DEFAULT_DISCOVERY_ADDRESS);
+        discovery.setGroupAddr(DiscoveryConfig.DEFAULT_DISCOVERY_ADDRESS);
         discovery.setGroupPort(8888);
 
 
         HydraRPC rpc = new HydraRPC();
         rpc.setDiscoveryConfig(discovery);
-        rpc.setSerializer(HydraRPC.KRYO_SERIALIZER);
+        rpc.setSerializer(new KryoSerializer(10 * 1024 * 1024));
         rpc.startupDiscovery();
-        rpc.waitProvider();
+        rpc.waitProviders();
 
         TestInterface t = rpc.lookup(TestInterface.class);
         System.out.println(t.getName());
