@@ -31,6 +31,16 @@ public class HydraRPC implements DiscoveryListener,RPC{
         this.serializer = serializer;
     }
 
+    @Override
+    public void setProvider(ProviderConfig config) {
+        this.addProvider(config);
+    }
+
+    @Override
+    public void setDiscovery(DiscoveryConfig discoveryConfig) {
+        this.discoveryConfig = discoveryConfig;
+    }
+
     public <T> T lookup(Class<?> interfaceClass){
         Collection<Class<?>> services = services();
         if(!services.contains(interfaceClass)){
