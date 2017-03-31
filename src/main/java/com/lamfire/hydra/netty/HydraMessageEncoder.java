@@ -6,13 +6,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-18
- * Time: 下午1:54
- * To change this template use File | Settings | File Templates.
- */
+
 public class HydraMessageEncoder extends MessageToByteEncoder<Message> {
 
     @Override

@@ -5,16 +5,10 @@ import com.lamfire.hydra.MessageFactory;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
+import io.netty.util.ReferenceCountUtil;
 
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-18
- * Time: 上午11:12
- * To change this template use File | Settings | File Templates.
- */
 public class HydraMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
     public HydraMessageDecoder(){
 
@@ -27,24 +21,26 @@ public class HydraMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
         int option = msg.readInt();
         byte[] content = null;
 
+
         //is heartbeat request
-        if(HeartbeatMessage.isHeartbeatRequest(id,contentLength,option)){
+        if (HeartbeatMessage.isHeartbeatRequest(id, contentLength, option)) {
             out.add(HeartbeatMessage.HEARTBEAT_REQUEST_MESSAGE);
-            return ;
+            return;
         }
 
         //is heartbeat request
-        if(HeartbeatMessage.isHeartbeatResponse(id, contentLength, option)){
+        if (HeartbeatMessage.isHeartbeatResponse(id, contentLength, option)) {
             out.add(HeartbeatMessage.HEARTBEAT_RESPONSE_MESSAGE);
-            return ;
+            return;
         }
 
 
         //is normal message
-        if(contentLength > 0){
+        if (contentLength > 0) {
             content = new byte[contentLength];
             msg.readBytes(content);
         }
-        out.add(MessageFactory.message(id,option,content));
+        out.add(MessageFactory.message(id, option, content));
+
     }
 }

@@ -5,6 +5,7 @@ import com.lamfire.utils.ThreadFactory;
 import com.lamfire.utils.Threads;
 import com.lamfire.hydra.*;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -100,9 +101,9 @@ public class NettyServer implements Hydra {
                             ch.pipeline().addLast(new HydraMessageEncoder());
                             ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener,threadPoolExecutor));
                         }
-                    }).option(ChannelOption.SO_BACKLOG, 100)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    }).option(ChannelOption.SO_BACKLOG, 100).childOption(ChannelOption.SO_KEEPALIVE, true);
 
+            bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             bindFuture = bootstrap.bind(bind,port).sync();
         }catch (Exception e){
             throw new RuntimeException(e);
@@ -123,11 +124,14 @@ public class NettyServer implements Hydra {
         LOGGER.info("Shutdown boss group...");
         bossGroup.shutdownGracefully();
 
+        threadPoolExecutor.shutdown();
+
 
         bossGroup = null;
         workerGroup = null;
         bindFuture = null;
         bootstrap = null;
+        threadPoolExecutor= null;
     }
 
     @Override
