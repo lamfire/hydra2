@@ -1,12 +1,5 @@
 package com.lamfire.hydra;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-19
- * Time: 下午1:38
- * To change this template use File | Settings | File Templates.
- */
 public final class HeartbeatMessage extends HydraMessage{
     public static final HeartbeatMessage HEARTBEAT_REQUEST_MESSAGE = new HeartbeatMessage();
     public static final HeartbeatMessage HEARTBEAT_RESPONSE_MESSAGE = new HeartbeatMessage();
