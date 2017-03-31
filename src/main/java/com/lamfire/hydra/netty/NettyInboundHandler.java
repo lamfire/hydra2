@@ -5,13 +5,9 @@ import com.lamfire.logger.Logger;
 import com.lamfire.hydra.*;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-12
- * Time: 上午11:08
- * To change this template use File | Settings | File Templates.
- */
+
+import java.util.concurrent.ThreadPoolExecutor;
+
 public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = Logger.getLogger(NettyInboundHandler.class);
     private final NettySessionMgr  sessionMgr;
@@ -19,13 +15,15 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     private HeartbeatListener heartbeatListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
+    private ThreadPoolExecutor threadPoolExecutor;
 
-    public NettyInboundHandler(NettySessionMgr sessionMgr, MessageReceivedListener messageReceivedListener,HeartbeatListener heartbeatListener,SessionCreatedListener sessionCreatedListener,SessionClosedListener sessionClosedListener){
+    public NettyInboundHandler(NettySessionMgr sessionMgr, MessageReceivedListener messageReceivedListener,HeartbeatListener heartbeatListener,SessionCreatedListener sessionCreatedListener,SessionClosedListener sessionClosedListener,ThreadPoolExecutor threadPoolExecutor){
         this.sessionMgr = sessionMgr;
         this.messageReceivedListener = messageReceivedListener;
         this.heartbeatListener = heartbeatListener;
         this.sessionCreatedListener = sessionCreatedListener;
         this.sessionClosedListener = sessionClosedListener;
+        this.threadPoolExecutor = threadPoolExecutor;
     }
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -38,12 +36,21 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
+        if(messageReceivedListener == null){
+            return;
+        }
+
         if(msg instanceof Message){
-            if(messageReceivedListener == null){
+            Message m = (Message) msg;
+            if(threadPoolExecutor != null) {
+                NettyHandleTask task = new NettyHandleTask();
+                task.setMessageReceivedListener(messageReceivedListener);
+                task.setMessage(m);
+                task.setSession(sessionMgr.get(ctx.channel()));
+                this.threadPoolExecutor.submit(task);
                 return;
             }
-            Message m = (Message) msg;
-            messageReceivedListener.onMessageReceived(sessionMgr.get(ctx.channel()),m);
+            messageReceivedListener.onMessageReceived(sessionMgr.get(ctx.channel()), m);
         }
     }
 

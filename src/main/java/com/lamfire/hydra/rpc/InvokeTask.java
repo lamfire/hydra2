@@ -2,28 +2,33 @@ package com.lamfire.hydra.rpc;
 
 import com.lamfire.hydra.Message;
 import com.lamfire.hydra.MessageFactory;
-import com.lamfire.hydra.MessageReceivedListener;
 import com.lamfire.hydra.Session;
 import com.lamfire.logger.Logger;
 import com.lamfire.utils.StringUtils;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
-
-class RpcServerHandler implements MessageReceivedListener {
-    private static final Logger LOGGER = Logger.getLogger(RpcServerHandler.class);
+public class InvokeTask implements Runnable{
+    private static final Logger LOGGER = Logger.getLogger(InvokeTask.class);
+    private Session session;
+    private Message message;
     private RpcSerializer serializer;
     private ServiceRegistryConfig serviceRegistry;
 
-    public RpcServerHandler(){
-
+    public Session getSession() {
+        return session;
     }
 
-    public void setServiceRegistry(ServiceRegistryConfig serviceRegistry){
-        this.serviceRegistry = serviceRegistry;
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     public RpcSerializer getSerializer() {
@@ -34,8 +39,16 @@ class RpcServerHandler implements MessageReceivedListener {
         this.serializer = serializer;
     }
 
+    public ServiceRegistryConfig getServiceRegistry() {
+        return serviceRegistry;
+    }
+
+    public void setServiceRegistry(ServiceRegistryConfig serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
+    }
+
     @Override
-    public void onMessageReceived(Session session, Message message) {
+    public void run() {
         byte[] resultBytes = null;
         try {
             byte[] bytes = message.content();

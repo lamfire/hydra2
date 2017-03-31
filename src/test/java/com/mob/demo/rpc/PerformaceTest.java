@@ -29,7 +29,9 @@ public class PerformaceTest implements Runnable{
             try{
                 name = (anInterface.getName());
                 monitor.done();
-            }catch (Exception e){}
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         }
     }

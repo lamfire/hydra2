@@ -1,6 +1,7 @@
 package com.lamfire.hydra.netty;
 
 import com.lamfire.logger.Logger;
+import com.lamfire.utils.ThreadFactory;
 import com.lamfire.utils.Threads;
 import com.lamfire.hydra.*;
 import io.netty.bootstrap.ServerBootstrap;
@@ -13,6 +14,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
+
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,6 +37,7 @@ public class NettyServer implements Hydra {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ChannelFuture bindFuture;
+    private ThreadPoolExecutor threadPoolExecutor;
 
     private String bind = "0.0.0.0";
     private int port = 1980;
@@ -76,8 +82,12 @@ public class NettyServer implements Hydra {
             LOGGER.error("Bootstrap was running,system shutdown now...");
             System.exit(-1);
         }
+        if(workerThreads > 0) {
+            threadPoolExecutor = new ThreadPoolExecutor(workerThreads, workerThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new ThreadFactory("task"));
+        }
+
         bossGroup = new NioEventLoopGroup(4, Threads.makeThreadFactory("boss"));
-        workerGroup = new NioEventLoopGroup(workerThreads, Threads.makeThreadFactory("worker"));
+        workerGroup = new NioEventLoopGroup(4, Threads.makeThreadFactory("worker"));
         try {
             bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
@@ -88,7 +98,7 @@ public class NettyServer implements Hydra {
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
                             ch.pipeline().addLast(new HydraMessageDecoder());
                             ch.pipeline().addLast(new HydraMessageEncoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener,threadPoolExecutor));
                         }
                     }).option(ChannelOption.SO_BACKLOG, 100)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);

@@ -15,7 +15,7 @@ public class RpcServerMain {
         provider.setServiceAddr("127.0.0.1");
         provider.setBindAddr("0.0.0.0");
         provider.setPort(19800);
-        provider.setThreads(64);
+        provider.setThreads(4);
 
         //设置并开启服务发现机制
         DiscoveryConfig discovery = new DiscoveryConfig();

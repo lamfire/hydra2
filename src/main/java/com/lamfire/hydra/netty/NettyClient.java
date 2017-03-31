@@ -1,7 +1,7 @@
 package com.lamfire.hydra.netty;
 
 import com.lamfire.logger.Logger;
-import com.lamfire.utils.Threads;
+import com.lamfire.utils.*;
 import com.lamfire.hydra.*;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -12,9 +12,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 
 import java.util.Collection;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class NettyClient implements Snake,SessionCreatedListener {
     private static final Logger LOGGER = Logger.getLogger(NettyClient.class);
@@ -24,6 +22,7 @@ public class NettyClient implements Snake,SessionCreatedListener {
     private SessionClosedListener sessionClosedListener;
     private Bootstrap bootstrap;
     private EventLoopGroup workerGroup;
+    private ThreadPoolExecutor threadPoolExecutor;
 
     private ScheduledExecutorService heartbeatService ;
     private boolean heartbeatEnable = false;
@@ -94,6 +93,10 @@ public class NettyClient implements Snake,SessionCreatedListener {
             return;
         }
         workerGroup = new NioEventLoopGroup(workerThreads, Threads.makeThreadFactory("Hydra/worker"));
+        if(workerThreads > 0) {
+            threadPoolExecutor = new ThreadPoolExecutor(workerThreads, workerThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new com.lamfire.utils.ThreadFactory("task"));
+        }
+
         try {
             bootstrap = new Bootstrap();
             bootstrap.group(workerGroup).channel(NioSocketChannel.class)
@@ -104,7 +107,7 @@ public class NettyClient implements Snake,SessionCreatedListener {
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
                             ch.pipeline().addLast(new HydraMessageEncoder());
                             ch.pipeline().addLast(new HydraMessageDecoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener,NettyClient.this,sessionClosedListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener,NettyClient.this,sessionClosedListener,threadPoolExecutor));
                         }
                     });
 
@@ -158,11 +161,14 @@ public class NettyClient implements Snake,SessionCreatedListener {
 
         }
 
+        threadPoolExecutor.shutdown();
+
         LOGGER.info("Shutdown worker group...");
         workerGroup.shutdownGracefully();
 
         workerGroup = null;
         bootstrap = null;
+        threadPoolExecutor = null;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.lamfire.utils.StringUtils;
 
 import java.net.InetAddress;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class RpcServer implements DiscoveryListener,RPC{
     private static final Logger LOGGER = Logger.getLogger(RpcServer.class);
@@ -17,6 +18,7 @@ public class RpcServer implements DiscoveryListener,RPC{
     private ServiceRegistryConfig serviceRegistry;
     private boolean discoveryEnable = false;
     private RpcSerializer serializer = Serials.DEFAULT_SERIALIZER;
+    private ThreadPoolExecutor executor = null;
 
     public DiscoveryConfig getDiscoveryConfig() {
         return discoveryConfig;
@@ -92,6 +94,11 @@ public class RpcServer implements DiscoveryListener,RPC{
     }
 
     public synchronized void shutdown(){
+        if(this.executor != null){
+            this.executor.shutdown();
+        }
+        this.executor = null;
+
         if(hydra != null){
             hydra.shutdown();
         }

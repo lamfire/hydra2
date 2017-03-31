@@ -37,7 +37,7 @@ public class KryoSerializer implements RpcSerializer {
         }
     }
 
-    public <T> T decode(byte[] bytes,Class<T> cls) {
+    public synchronized <T> T decode(byte[] bytes,Class<T> cls) {
         Input input = new Input(bytes);
         try{
             return (T)kryo.readClassAndObject(input);

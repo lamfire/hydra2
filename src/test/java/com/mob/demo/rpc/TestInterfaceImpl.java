@@ -2,6 +2,7 @@ package com.mob.demo.rpc;
 
 import com.lamfire.utils.Lists;
 import com.lamfire.utils.RandomUtils;
+import com.lamfire.utils.Threads;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class TestInterfaceImpl implements TestInterface{
     public String getName(){
         //System.out.println("getName()");
+        //Threads.sleep(20);
         return "linfan";
     }
 
