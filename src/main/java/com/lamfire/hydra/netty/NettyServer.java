@@ -20,13 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-12
- * Time: 上午11:07
- * To change this template use File | Settings | File Templates.
- */
+
 public class NettyServer implements Hydra {
     private static final Logger LOGGER = Logger.getLogger(NettyServer.class);
     private final NettySessionMgr mgr = new NettySessionMgr();

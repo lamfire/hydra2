@@ -9,13 +9,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-18
- * Time: 下午3:42
- * To change this template use File | Settings | File Templates.
- */
+
 class NettyChannelClosedListener implements GenericFutureListener<Future<Void>> {
     private static final Logger LOGGER = Logger.getLogger(NettyChannelClosedListener.class);
 

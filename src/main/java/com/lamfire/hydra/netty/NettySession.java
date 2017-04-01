@@ -14,13 +14,7 @@ import java.net.SocketAddress;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-18
- * Time: 下午3:32
- * To change this template use File | Settings | File Templates.
- */
+
 public class NettySession implements Session {
     private long id;
     private ChannelHandlerContext channelContext;

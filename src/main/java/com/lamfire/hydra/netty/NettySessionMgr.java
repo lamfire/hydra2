@@ -13,13 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-18
- * Time: 下午3:35
- * To change this template use File | Settings | File Templates.
- */
 public class NettySessionMgr implements SessionMgr {
     private static final Logger LOGGER = Logger.getLogger(NettySessionMgr.class);
     private final Map<Long,Session> sessions = Maps.newConcurrentMap();
