@@ -9,7 +9,7 @@ public class ProviderConfig implements Serializable{
     private String serviceAddr;
     private String bindAddr = "0.0.0.0";
     private int port = 19800;
-    private long timeoutMillis = 6000;
+    private long timeoutMillis = 30000;
 
     public ProviderConfig(){}
 
