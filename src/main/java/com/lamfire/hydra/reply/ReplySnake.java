@@ -23,9 +23,9 @@ public class ReplySnake implements MessageReceivedListener {
     final Map<Integer,Future> replys = Maps.newConcurrentMap();
     final AtomicInteger counter = new AtomicInteger();
 
-    private int threads  = 16;
-    private long readTimeoutMillis = 6000;
-    private int heartbeatIntervalMillis = 15000;
+    private int threads  = 4;
+    private long readTimeoutMillis = 30000;
+    private int heartbeatIntervalMillis = 300000;
     private boolean heartbeatEnable = true;
     private boolean autoConnectRetry = true;
 

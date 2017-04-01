@@ -16,6 +16,7 @@ public class RpcServerMain {
         provider.setBindAddr("0.0.0.0");
         provider.setPort(19800);
         provider.setThreads(20);
+        provider.setTimeoutMillis(15000);
 
         //设置并开启服务发现机制
         DiscoveryConfig discovery = new DiscoveryConfig();

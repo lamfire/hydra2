@@ -26,7 +26,7 @@ public class NettyClient implements Snake,SessionCreatedListener {
 
     private ScheduledExecutorService heartbeatService ;
     private boolean heartbeatEnable = false;
-    private int heartbeatInterval = 15000;
+    private int heartbeatInterval = 300000;
     private HeartbeatListener heartbeatListener;
     private boolean autoConnectRetry = false;
     private int connectionTimeout = 15000;

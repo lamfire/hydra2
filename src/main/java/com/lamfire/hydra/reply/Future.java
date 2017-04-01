@@ -7,7 +7,7 @@ import java.util.concurrent.TimeoutException;
 public class Future {
     private final long createAt = System.currentTimeMillis();
     private Message response;
-    private long timeout = 6000;
+    private long timeout = 30000;
 
     void setTimeout(long timeoutMillis){
         this.timeout = timeoutMillis;

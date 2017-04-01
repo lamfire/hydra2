@@ -54,6 +54,7 @@ public class PerformaceTest implements Runnable{
         rpc.startupDiscovery();
         rpc.waitProviders();
 
+
         TestInterface t = rpc.lookup(TestInterface.class);
         System.out.println(t.getName());
 
