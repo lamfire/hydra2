@@ -1,20 +1,15 @@
-package com.lamfire.hydra.netty;
+package com.lamfire.hydra;
 
+import com.lamfire.hydra.netty.NettySession;
 import com.lamfire.logger.Logger;
-import com.lamfire.utils.Lists;
 import com.lamfire.utils.Maps;
-import com.lamfire.hydra.Session;
-import com.lamfire.hydra.SessionClosedListener;
-import com.lamfire.hydra.SessionMgr;
 import io.netty.channel.Channel;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-public class NettySessionMgr implements SessionMgr {
-    private static final Logger LOGGER = Logger.getLogger(NettySessionMgr.class);
+public class HydraSessionMgr implements SessionMgr {
+    private static final Logger LOGGER = Logger.getLogger(HydraSessionMgr.class);
     private final Map<Long,Session> sessions = Maps.newConcurrentMap();
 
     private SessionClosedListener closedListener = new SessionClosedListener() {
@@ -31,8 +26,7 @@ public class NettySessionMgr implements SessionMgr {
             return;
         }
         sessions.put(session.getId(),session);
-        NettySession s = ((NettySession)session);
-        s.addCloseListener(closedListener);
+        session.addCloseListener(closedListener);
     }
 
     @Override
@@ -59,9 +53,14 @@ public class NettySessionMgr implements SessionMgr {
         if(session == null){
             return;
         }
-        sessions.remove(session.getId());
-        NettySession s = ((NettySession)session);
-        s.removeCloseListener(closedListener);
+        remove(session.getId());
+    }
+
+    @Override
+    public Session remove(long id) {
+        Session session = sessions.remove(id);
+        session.removeCloseListener(closedListener);
+        return session;
     }
 
     public void close(){

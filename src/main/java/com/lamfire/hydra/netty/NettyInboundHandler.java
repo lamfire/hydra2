@@ -10,14 +10,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = Logger.getLogger(NettyInboundHandler.class);
-    private final NettySessionMgr  sessionMgr;
+    private final HydraSessionMgr sessionMgr;
     private final MessageReceivedListener messageReceivedListener;
     private HeartbeatListener heartbeatListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
     private ThreadPoolExecutor threadPoolExecutor;
 
-    public NettyInboundHandler(NettySessionMgr sessionMgr, MessageReceivedListener messageReceivedListener,HeartbeatListener heartbeatListener,SessionCreatedListener sessionCreatedListener,SessionClosedListener sessionClosedListener,ThreadPoolExecutor threadPoolExecutor){
+    public NettyInboundHandler(HydraSessionMgr sessionMgr, MessageReceivedListener messageReceivedListener, HeartbeatListener heartbeatListener, SessionCreatedListener sessionCreatedListener, SessionClosedListener sessionClosedListener, ThreadPoolExecutor threadPoolExecutor){
         this.sessionMgr = sessionMgr;
         this.messageReceivedListener = messageReceivedListener;
         this.heartbeatListener = heartbeatListener;

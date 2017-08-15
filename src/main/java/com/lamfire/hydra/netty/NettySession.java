@@ -6,6 +6,7 @@ import com.lamfire.hydra.Message;
 import com.lamfire.hydra.Session;
 import com.lamfire.hydra.SessionClosedListener;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
@@ -36,6 +37,13 @@ public class NettySession implements Session {
     @Override
     public void send(Message message) {
         channelContext.writeAndFlush(message);
+    }
+
+    public void send(Message message,boolean sync) throws InterruptedException {
+        ChannelFuture future = channelContext.writeAndFlush(message);
+        if(sync) {
+            future.sync();
+        }
     }
 
     public SocketAddress getRemoteAddress(){

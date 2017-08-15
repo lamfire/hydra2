@@ -2,36 +2,31 @@ package com.lamfire.hydra;
 
 import java.net.SocketAddress;
 
-/**
- * Created with IntelliJ IDEA.
- * User: linfan
- * Date: 15-8-18
- * Time: 下午3:17
- * To change this template use File | Settings | File Templates.
- */
 public interface Session {
 
-    public long getId();
+    long getId();
 
-    public void send(Message message);
+    void send(Message message);
 
-    public void close();
+    void send(Message message,boolean sync)throws InterruptedException;
 
-    public SocketAddress getRemoteAddress();
+    void close();
 
-    public boolean isActive();
+    SocketAddress getRemoteAddress();
 
-    public boolean isOpen();
+    boolean isActive();
 
-    public boolean isWritable();
+    boolean isOpen();
 
-    public Object attr(String name);
+    boolean isWritable();
 
-    public void attr(String name,Object value);
+    Object attr(String name);
 
-    public void heartbeat();
+    void attr(String name,Object value);
 
-    public void addCloseListener(SessionClosedListener listener);
+    void heartbeat();
 
-    public void removeCloseListener(SessionClosedListener listener);
+    void addCloseListener(SessionClosedListener listener);
+
+    void removeCloseListener(SessionClosedListener listener);
 }

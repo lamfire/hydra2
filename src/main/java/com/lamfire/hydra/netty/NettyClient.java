@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 
 public class NettyClient implements Snake,SessionCreatedListener {
     private static final Logger LOGGER = Logger.getLogger(NettyClient.class);
-    private final NettySessionMgr mgr = new NettySessionMgr();
+    private final HydraSessionMgr mgr = new HydraSessionMgr();
     private MessageReceivedListener messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
