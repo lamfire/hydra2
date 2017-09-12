@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.lamfire</groupId>
             <artifactId>lamfire</artifactId>
-            <version>2.3.25</version>
+            <version>2.3.26</version>
         </dependency>
         <dependency>
             <groupId>com.esotericsoftware</groupId>
