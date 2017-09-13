@@ -3,6 +3,8 @@ package com.mob.demo;
 import com.lamfire.hydra.*;
 import com.lamfire.utils.StringUtils;
 
+import java.util.Collection;
+
 /**
  * Created with IntelliJ IDEA.
  * User: linfan
@@ -10,7 +12,9 @@ import com.lamfire.utils.StringUtils;
  * Time: 上午11:05
  * To change this template use File | Settings | File Templates.
  */
-public class HydraBootstrap implements MessageReceivedListener {
+public class HydraBootstrap implements MessageReceivedListener ,SessionCreatedListener{
+
+    AutoRemoveSessionGroup group = new AutoRemoveSessionGroup("TEST_AUTO_CLOSE");
 
     public static void main(String[] args) {
         String host = "0.0.0.0";
@@ -27,8 +31,9 @@ public class HydraBootstrap implements MessageReceivedListener {
             }
         }
 
+        HydraBootstrap sample = new HydraBootstrap();
         HydraBuilder builder = new HydraBuilder();
-        builder.bind(host).port(port).messageReceivedListener(new HydraBootstrap());
+        builder.bind(host).port(port).messageReceivedListener(sample).sessionCreatedListener(sample);
 
         Hydra hydra = builder.build();
         hydra.startup();
@@ -39,5 +44,17 @@ public class HydraBootstrap implements MessageReceivedListener {
         //System.out.println("[MESSAGE] : "+message.header() +" -> " + (message.content()==null?"":new String(message.content())));
         session.send(message);
     }
+
+    @Override
+    public void onCreated(Session session) {
+        long id = session.getId();
+        group.put("SESSION-" +id,session);
+
+        Collection<Session> sessions = group.all();
+        for(Session s : sessions){
+            System.out.println("----" + s);
+        }
+    }
+
 
 }
