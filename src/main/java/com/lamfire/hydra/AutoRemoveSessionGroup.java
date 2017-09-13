@@ -57,9 +57,12 @@ public class AutoRemoveSessionGroup {
         if(session == null){
             return;
         }
-        sessions.remove(session.attr(SESSION_ATTR_KEY));
-        NettySession s = ((NettySession)session);
-        s.removeCloseListener(closedListener);
+        Object key = session.attr(SESSION_ATTR_KEY);
+        if(key != null) {
+            sessions.remove(key);
+            NettySession s = ((NettySession) session);
+            s.removeCloseListener(closedListener);
+        }
     }
 
     public void remove(Object key){
