@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class NettyServer implements Hydra {
     private static final Logger LOGGER = Logger.getLogger(NettyServer.class);
-    private final HydraSessionMgr mgr = new HydraSessionMgr();
+    private final HydraSessionMgr mgr = new HydraSessionMgr("NettyServer");
     private MessageReceivedListener messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;

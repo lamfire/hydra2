@@ -8,5 +8,5 @@ public interface Snake {
     public void setMessageReceivedListener(MessageReceivedListener listener);
     public Session getSession();
     public boolean isAvailable();
-    public void waitSessionCreated();
+    public void waitConnections();
 }

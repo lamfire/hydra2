@@ -59,8 +59,8 @@ public class ReplySnake implements MessageReceivedListener {
         cleanService.scheduleWithFixedDelay(new FutureTimeoutClean(replys),15,15,TimeUnit.SECONDS);
     }
 
-    public synchronized void waitSessionCreated(){
-        snake.waitSessionCreated();
+    public synchronized void waitConnections(){
+        snake.waitConnections();
     }
 
     public boolean isAvailable(){

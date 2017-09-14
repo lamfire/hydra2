@@ -59,7 +59,7 @@ class RpcClientImpl implements RpcClient {
         snake.setHeartbeatEnable(true);
         snake.setAutoConnectRetry(true);
         snake.startup(host,port);
-        snake.waitSessionCreated();
+        snake.waitConnections();
     }
 
     public void shutdown(){

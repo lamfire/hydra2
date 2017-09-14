@@ -27,12 +27,15 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     }
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        long sessionId = ctx.channel().hashCode();
+        Session session = sessionMgr.get(sessionId);
+
         if(msg instanceof HeartbeatMessage){
             if(heartbeatListener == null){
                 return;
             }
             HeartbeatMessage hm = (HeartbeatMessage)msg;
-            heartbeatListener.onHeartbeat(sessionMgr.get(ctx.channel()),hm);
+            heartbeatListener.onHeartbeat(session,hm);
             return;
         }
 
@@ -46,11 +49,11 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
                 NettyHandleTask task = new NettyHandleTask();
                 task.setMessageReceivedListener(messageReceivedListener);
                 task.setMessage(m);
-                task.setSession(sessionMgr.get(ctx.channel()));
+                task.setSession(session);
                 this.threadPoolExecutor.submit(task);
                 return;
             }
-            messageReceivedListener.onMessageReceived(sessionMgr.get(ctx.channel()), m);
+            messageReceivedListener.onMessageReceived(session, m);
         }
     }
 
@@ -67,9 +70,8 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        long id = UUIDGen.getTimeSafe();
-        NettySession s = new NettySession(id,ctx);
-        sessionMgr.add(s);
+        NettySession s = new NettySession(ctx.channel().hashCode(),ctx);
+        sessionMgr.put(s.getId(),s);
         if(sessionCreatedListener != null){
             sessionCreatedListener.onCreated(s);
         }

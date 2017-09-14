@@ -4,10 +4,10 @@ import java.util.Collection;
 
 
 public interface SessionMgr {
-    void add(Session session);
+    void put(Object key,Session session);
     void remove(Session session);
-    Session remove(long id);
-    Session get(long id);
+    Session remove(Object id);
+    Session get(Object id);
     Collection<Session> all();
     void close();
     int size();

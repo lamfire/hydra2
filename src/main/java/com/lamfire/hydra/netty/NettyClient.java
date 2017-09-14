@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 
 public class NettyClient implements Snake,SessionCreatedListener {
     private static final Logger LOGGER = Logger.getLogger(NettyClient.class);
-    private final HydraSessionMgr mgr = new HydraSessionMgr();
+    private final HydraSessionMgr mgr = new HydraSessionMgr("NettyClient");
     private MessageReceivedListener messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
@@ -111,12 +111,13 @@ public class NettyClient implements Snake,SessionCreatedListener {
                         }
                     });
 
-            bootstrap.connect(host,port).sync();
+            bootstrap.connect(host,port).await();
         }catch (Exception e){
             LOGGER.error(e.getMessage(),e);
         }
         //startup heartbeat
         startupHeartbeat();
+        waitConnections();
     }
 
     private void startupHeartbeat(){
@@ -126,7 +127,7 @@ public class NettyClient implements Snake,SessionCreatedListener {
         }
     }
 
-    public synchronized void waitSessionCreated(){
+    public synchronized void waitConnections(){
         if(mgr.isEmpty()){
             try {
                 this.wait(connectionTimeout);
@@ -192,6 +193,12 @@ public class NettyClient implements Snake,SessionCreatedListener {
            return null;
         }
         return mgr.all().iterator().next();
+    }
+
+    public synchronized void waitAvailable(){
+        while(!isAvailable()){
+            Threads.sleep(10);
+        }
     }
 
     @Override
