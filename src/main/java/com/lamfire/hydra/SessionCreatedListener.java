@@ -1,7 +1,7 @@
 package com.lamfire.hydra;
 
 /**
- * Created with IntelliJ IDEA.
+ * SessionCreatedListener
  * User: linfan
  * Date: 15-8-19
  * Time: 下午3:27

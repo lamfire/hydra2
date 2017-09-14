@@ -1,7 +1,7 @@
 package com.lamfire.hydra;
 
 /**
- * Created with IntelliJ IDEA.
+ * HeartbeatListener
  * User: linfan
  * Date: 15-8-18
  * Time: 下午5:02

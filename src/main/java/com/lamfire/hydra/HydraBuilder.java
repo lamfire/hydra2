@@ -4,7 +4,7 @@ import com.lamfire.utils.Asserts;
 import com.lamfire.hydra.netty.NettyServer;
 
 /**
- * Created with IntelliJ IDEA.
+ * HydraBuilder
  * User: linfan
  * Date: 15-8-18
  * Time: 下午5:38

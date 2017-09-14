@@ -4,7 +4,7 @@ package com.lamfire.hydra;
 import java.nio.charset.Charset;
 
 /**
- * Created with IntelliJ IDEA.
+ * HydraMessage
  * User: linfan
  * Date: 15-8-18
  * Time: 上午11:31

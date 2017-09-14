@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created with IntelliJ IDEA.
+ * ReplySnake
  * User: linfan
  * Date: 15-8-18
  * Time: 上午11:00

@@ -3,7 +3,7 @@ package com.lamfire.hydra;
 import com.lamfire.logger.Logger;
 
 /**
- * Created with IntelliJ IDEA.
+ * DefaultHeartbeatListener
  * User: linfan
  * Date: 15-8-19
  * Time: 下午2:04

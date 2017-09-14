@@ -1,9 +1,7 @@
 package com.lamfire.hydra;
 
-import com.lamfire.code.CRC32;
-
 /**
- * Created with IntelliJ IDEA.
+ * MessageFactory
  * User: linfan
  * Date: 15-8-19
  * Time: 上午10:30
