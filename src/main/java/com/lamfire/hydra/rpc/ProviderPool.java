@@ -3,14 +3,16 @@ package com.lamfire.hydra.rpc;
 import com.lamfire.logger.Logger;
 import com.lamfire.utils.CircularLinkedList;
 import com.lamfire.utils.StringUtils;
+import com.lamfire.utils.Threads;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-class ProviderPool {
+class ProviderPool implements Runnable{
     private static final Logger LOGGER = Logger.getLogger(ProviderPool.class);
     private final Map<String,ProviderConfig> providers = new HashMap<String, ProviderConfig>();
     private final Map<String,RpcClient> clients = new HashMap<String, RpcClient>();
@@ -18,7 +20,12 @@ class ProviderPool {
 
     private final Lock lock = new ReentrantLock();
 
+    public ProviderPool(){
+        Threads.scheduleWithFixedDelay(this,30,30, TimeUnit.SECONDS);
+    }
+
     public synchronized void addProvider(ProviderConfig config){
+        LOGGER.info("[ADD_PROVIDER] :" + config);
         try {
             lock.lock();
             String providerName = config.getName();
@@ -28,14 +35,14 @@ class ProviderPool {
             }else {
                 addNewProvider(config);
             }
-            getOrCreateRpcClient(providerName);
+            createNewRpcClient(config);
         }finally {
             lock.unlock();
         }
     }
 
     private synchronized void addNewProvider(ProviderConfig config){
-        LOGGER.info("add new provider :" + config);
+        LOGGER.info("[NEW_PROVIDER] :" + config);
         String providerName = config.getName();
         providers.put(providerName,config);
         if(!providerNames.contains(config.getName())) {
@@ -44,7 +51,7 @@ class ProviderPool {
     }
 
     private synchronized void replaceProvider(ProviderConfig config){
-        LOGGER.info("replace provider : "  +config);
+        LOGGER.info("[REPLACE_PROVIDER] : "  +config);
         String providerName = config.getName();
         ProviderConfig old = providers.get(providerName);
         providers.put(providerName,config);
@@ -52,7 +59,7 @@ class ProviderPool {
         //仅修改设置
         if(StringUtils.equals(old.getServiceAddr(),config.getServiceAddr()) && old.getPort() == config.getPort()){
             providers.put(providerName,config);
-            LOGGER.info("update provider setting - " + old + " -> " +config);
+            LOGGER.info("[UPDATE_PROVIDER] - " + old + " -> " +config);
             return;
         }
 
@@ -60,31 +67,50 @@ class ProviderPool {
         //替换client
         RpcClient client = clients.remove(config.getName());
         if(client != null){
-            LOGGER.info("shutdown old provider client");
+            LOGGER.info("[SHUTDOWN_PROVIDER] - " + old);
             client.shutdown();
         }
+    }
+
+    private synchronized RpcClient createNewRpcClient(ProviderConfig config){
+        LOGGER.info("[CREATE_PRC_CLIENT] : "  +config);
+        RpcClient client = null;
+        try {
+            if (client == null) {
+                RpcClientImpl c = new RpcClientImpl(config.getServiceAddr(), config.getPort());
+                c.setThreads(config.getThreads());
+                c.setTimeout(config.getTimeoutMillis());
+                c.startup();
+                if(c.isAvailable()) {
+                    clients.put(config.getName(), c);
+                    client = c;
+                }
+            }
+        }catch (Throwable e){
+            LOGGER.error(e.getMessage(),e);
+        }finally {
+
+        }
+        if(client == null){
+            LOGGER.error("[FAILED_CREATE_PRC_CLIENT] : "  +config);
+        }
+        return client;
     }
 
     private synchronized RpcClient getOrCreateRpcClient(String providerName){
         RpcClient client = clients.get(providerName);
         try {
-            lock.lock();
             if (client == null) {
                 ProviderConfig config = providers.get(providerName);
                 if (config == null) {
                     throw new RpcException("The provider not found - " + providerName);
                 }
-                RpcClientImpl c = new RpcClientImpl(config.getServiceAddr(), config.getPort());
-                c.setThreads(config.getThreads());
-                c.setTimeout(config.getTimeoutMillis());
-                c.startup();
-                clients.put(providerName, c);
-                client = c;
+                client = createNewRpcClient(config);
             }
         }catch (Throwable e){
             LOGGER.error(e.getMessage(),e);
         }finally {
-            lock.unlock();
+
         }
         return client;
     }
@@ -92,26 +118,38 @@ class ProviderPool {
 
     private RpcClient getNextRpcClient(){
         String name = providerNames.next();
-        RpcClient c = getOrCreateRpcClient(name);
-        return c;
+        RpcClient client = clients.get(name);
+        return client;
     }
 
-    public synchronized RpcClient getRpcClient(){
+    public RpcClient getRpcClient(){
         try {
-            lock.lock();
             for (int i = 0; i < providerNames.size(); i++) {
                 RpcClient c = getNextRpcClient();
-                if (c != null && c.isAvailable()) {
+                if(c == null){
+                    continue;
+                }
+                if (c.isAvailable()) {
                     return c;
                 }
             }
-            throw new RpcException("Not found available RpcClient");
+            throw new RpcException("Not found available RPC providers");
         }finally {
-            lock.unlock();
+
         }
     }
 
     public boolean isEmpty(){
-        return providers.isEmpty();
+        return providers.isEmpty() || clients.isEmpty();
+    }
+
+    @Override
+    public void run() {
+        for(Map.Entry<String,ProviderConfig> provider : providers.entrySet()){
+            RpcClient client = clients.get(provider.getKey());
+            if(client == null){
+                createNewRpcClient(provider.getValue());
+            }
+        }
     }
 }
