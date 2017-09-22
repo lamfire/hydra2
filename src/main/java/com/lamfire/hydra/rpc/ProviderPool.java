@@ -84,6 +84,7 @@ class ProviderPool implements Runnable{
                 if(c.isAvailable()) {
                     clients.put(config.getName(), c);
                     client = c;
+                    LOGGER.info("[CREATE_PRC_CLIENT_SUCCESS] : "  +config.getName());
                 }
             }
         }catch (Throwable e){
@@ -92,7 +93,7 @@ class ProviderPool implements Runnable{
 
         }
         if(client == null){
-            LOGGER.error("[FAILED_CREATE_PRC_CLIENT] : "  +config);
+            LOGGER.error("[CREATE_PRC_CLIENT_FAILED] : "  +config.getName());
         }
         return client;
     }
@@ -148,7 +149,10 @@ class ProviderPool implements Runnable{
         for(Map.Entry<String,ProviderConfig> provider : providers.entrySet()){
             RpcClient client = clients.get(provider.getKey());
             if(client == null){
-                createNewRpcClient(provider.getValue());
+                client = createNewRpcClient(provider.getValue());
+                if(client != null){
+                    clients.put(provider.getKey(),client);
+                }
             }
         }
     }
