@@ -35,11 +35,10 @@ public class PerformenceTest implements MessageReceivedListener {
         String data = RandomUtils.randomText(100);
         byte[] content = data.getBytes();
         Message m = MessageFactory.message(0,0,content);
-        session.send(m);
-        session.send(m);
-        session.send(m);
-        session.send(m);
-        session.send(m);
+
+        for(int i=0;i<100;i++) {
+            session.send(m);
+        }
 
     }
 
