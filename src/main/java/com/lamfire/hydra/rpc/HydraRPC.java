@@ -94,7 +94,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
         }
     }
 
-    public boolean hashProviders(){
+    public boolean hashAvailableProviders(){
         return !this.pool.isEmpty();
     }
 

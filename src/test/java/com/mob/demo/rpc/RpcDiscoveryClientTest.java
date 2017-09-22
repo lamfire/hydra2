@@ -25,7 +25,7 @@ public class RpcDiscoveryClientTest {
         rpc.startupDiscovery(discovery);
 
         //rpc.addProvider(config);
-        if(!rpc.hashProviders()){
+        if(!rpc.hashAvailableProviders()){
             rpc.waitProviders();
         }
 

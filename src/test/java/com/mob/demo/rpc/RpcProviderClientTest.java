@@ -23,7 +23,7 @@ public class RpcProviderClientTest {
         rpc.setSerializer(new KryoSerializer());
         rpc.addProvider(provider);
 
-        if(!rpc.hashProviders()){
+        if(!rpc.hashAvailableProviders()){
             rpc.waitProviders();
         }
 

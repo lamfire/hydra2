@@ -7,7 +7,7 @@ public class DiscoveryConfig implements Serializable{
     public static final  int DEFAULT_DISCOVERY_PORT = 6666;
     private String groupId;
     private String groupAddr;
-    private int groupPort;
+    private int groupPort = DEFAULT_DISCOVERY_PORT;
     private ProviderConfig providerConfig;
 
     public String getGroupId() {
