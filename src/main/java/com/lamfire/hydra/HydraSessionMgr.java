@@ -1,6 +1,5 @@
 package com.lamfire.hydra;
 
-import com.lamfire.hydra.netty.NettySession;
 import com.lamfire.logger.Logger;
 import com.lamfire.utils.Maps;
 
@@ -34,8 +33,7 @@ public class HydraSessionMgr implements SessionMgr {
         }
         sessions.put(key,session);
         session.attr(SESSION_ATTR_KEY,key);
-        NettySession s = ((NettySession)session);
-        s.addCloseListener(closedListener);
+        session.addCloseListener(closedListener);
     }
 
 
@@ -57,8 +55,7 @@ public class HydraSessionMgr implements SessionMgr {
         Object key = session.attr(SESSION_ATTR_KEY);
         if(key != null) {
             sessions.remove(key);
-            NettySession s = ((NettySession) session);
-            s.removeCloseListener(closedListener);
+            session.removeCloseListener(closedListener);
         }
     }
 
