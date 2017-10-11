@@ -211,8 +211,22 @@ public class NettyClient implements Snake,SessionCreatedListener {
     }
 
     public synchronized void waitAvailable(){
-        while(!isAvailable()){
-            Threads.sleep(10);
+        if(!isAvailable()){
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public synchronized void waitAvailable(long millis){
+        if(!isAvailable()){
+            try {
+                this.wait(millis);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -265,10 +279,10 @@ public class NettyClient implements Snake,SessionCreatedListener {
 
     @Override
     public synchronized void onCreated(Session session) {
+        this.notifyAll();
         if(this.sessionCreatedListener != null){
             this.sessionCreatedListener.onCreated(session);
         }
-        this.notifyAll();
     }
 
     public int getAutoConnectRetryInterval() {
