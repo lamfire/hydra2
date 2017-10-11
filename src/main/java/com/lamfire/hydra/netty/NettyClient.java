@@ -270,4 +270,13 @@ public class NettyClient implements Snake,SessionCreatedListener {
         }
         this.notifyAll();
     }
+
+    public int getAutoConnectRetryInterval() {
+        return autoConnectRetryInterval;
+    }
+
+    public void setAutoConnectRetryInterval(int autoConnectRetryInterval) {
+        this.autoConnectRetryInterval = autoConnectRetryInterval;
+    }
+
 }
