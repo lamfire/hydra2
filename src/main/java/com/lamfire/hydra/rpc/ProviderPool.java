@@ -21,7 +21,7 @@ class ProviderPool implements Runnable{
     private final Lock lock = new ReentrantLock();
 
     public ProviderPool(){
-        Threads.scheduleWithFixedDelay(this,30,30, TimeUnit.SECONDS);
+        Threads.scheduleWithFixedDelay(this,5,5, TimeUnit.SECONDS);
     }
 
     public synchronized void addProvider(ProviderConfig config){
@@ -45,8 +45,8 @@ class ProviderPool implements Runnable{
         LOGGER.info("[NEW_PROVIDER] :" + config);
         String providerName = config.getName();
         providers.put(providerName,config);
-        if(!providerNames.contains(config.getName())) {
-            providerNames.add(config.getName());
+        if(!providerNames.contains(providerName)) {
+            providerNames.add(providerName);
         }
     }
 
@@ -125,7 +125,7 @@ class ProviderPool implements Runnable{
 
     public RpcClient getRpcClient(){
         try {
-            for (int i = 0; i < providerNames.size(); i++) {
+            for (int i = 0; i < providers.size(); i++) {
                 RpcClient c = getNextRpcClient();
                 if(c == null){
                     continue;
