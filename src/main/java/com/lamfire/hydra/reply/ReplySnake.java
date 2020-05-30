@@ -124,4 +124,8 @@ public class ReplySnake implements MessageReceivedListener {
             f.onResponse(message);
         }
     }
+
+    public int getSendCount(){
+        return counter.get();
+    }
 }

@@ -2,6 +2,7 @@ package com.mob.demo;
 
 import com.lamfire.hydra.Message;
 import com.lamfire.hydra.reply.Future;
+import com.lamfire.hydra.reply.OnReplyResponseListener;
 import com.lamfire.hydra.reply.ReplySnake;
 import com.lamfire.utils.RandomUtils;
 import com.lamfire.utils.Threads;
@@ -35,13 +36,30 @@ public class ReplyBootstrap {
         }, 1, 1, TimeUnit.SECONDS);
 
         while(true){
-            c.incrementAndGet();
+
             String data = RandomUtils.randomText(100);
             byte[] content = data.getBytes();
             Future f = reply.send(content);
+            /**
             byte[] bytes = f.getResponse() ;
             if(bytes != null){
                 //System.out.println(new String(m.content()));
+            }
+             **/
+
+            /** async*/
+            f.setOnReplyResponseListener(new OnReplyResponseListener() {
+                @Override
+                public void onReplyResponse(Message response) {
+                    c.incrementAndGet();
+                }
+            });
+
+            if(reply.getSendCount() % 200000 == 0){
+                byte[] bytes = f.getResponse();
+                if(bytes != null){
+                    System.out.println(new String(bytes));
+                }
             }
         }
     }
