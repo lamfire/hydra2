@@ -1,8 +1,6 @@
 package com.lamfire.hydra.netty.websocket;
 
 import com.lamfire.hydra.*;
-import com.lamfire.hydra.netty.HydraMessageDecoder;
-import com.lamfire.hydra.netty.HydraMessageEncoder;
 import com.lamfire.hydra.netty.NettyInboundHandler;
 import com.lamfire.logger.Logger;
 import com.lamfire.utils.ThreadFactory;
@@ -13,8 +11,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
@@ -26,8 +22,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 
-public class HydraWebsocketServer implements Hydra {
-    private static final Logger LOGGER = Logger.getLogger(HydraWebsocketServer.class);
+public class HydraWebSocketServer implements Hydra {
+    private static final Logger LOGGER = Logger.getLogger(HydraWebSocketServer.class);
     private static final int MAX_IDLE_SECONDS = 300;
     private final HydraSessionMgr mgr = new HydraSessionMgr("NettyServer");
     private MessageReceivedListener messageReceivedListener;
@@ -46,11 +42,11 @@ public class HydraWebsocketServer implements Hydra {
     private String websocketPath = "/ws";
     private int maxContentLength = 65535;
 
-    public HydraWebsocketServer(int port){
+    public HydraWebSocketServer(int port){
         this.port = port;
     }
 
-    public HydraWebsocketServer(String bind, int port){
+    public HydraWebSocketServer(String bind, int port){
         this.bind = bind;
         this.port = port;
     }

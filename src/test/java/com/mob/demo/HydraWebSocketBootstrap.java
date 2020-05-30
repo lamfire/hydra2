@@ -1,7 +1,7 @@
 package com.mob.demo;
 
 import com.lamfire.hydra.*;
-import com.lamfire.hydra.netty.websocket.HydraWebsocketServer;
+import com.lamfire.hydra.netty.websocket.HydraWebSocketServer;
 import com.lamfire.utils.StringUtils;
 
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Collection;
  * Time: 上午11:05
  * To change this template use File | Settings | File Templates.
  */
-public class HydraWebsocketBootstrap implements MessageReceivedListener ,SessionCreatedListener{
+public class HydraWebSocketBootstrap implements MessageReceivedListener ,SessionCreatedListener{
 
     AutoRemoveSessionGroup group = new AutoRemoveSessionGroup("TEST_AUTO_CLOSE");
 
@@ -32,10 +32,11 @@ public class HydraWebsocketBootstrap implements MessageReceivedListener ,Session
             }
         }
 
-        HydraWebsocketBootstrap sample = new HydraWebsocketBootstrap();
-        HydraWebsocketServer websocketServer = new HydraWebsocketServer(port);
-        websocketServer.setMessageReceivedListener(sample);
-        websocketServer.startup();
+        WebSocketHydraBuilder builder = new WebSocketHydraBuilder();
+        builder.messageReceivedListener(new HydraWebSocketBootstrap());
+
+        Hydra hydra = builder.build();
+        hydra.startup();
     }
 
     @Override
