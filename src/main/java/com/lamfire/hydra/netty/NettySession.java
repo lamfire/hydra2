@@ -1,10 +1,10 @@
 package com.lamfire.hydra.netty;
 
-import com.lamfire.utils.Lists;
 import com.lamfire.hydra.HeartbeatMessage;
 import com.lamfire.hydra.Message;
 import com.lamfire.hydra.Session;
 import com.lamfire.hydra.SessionClosedListener;
+import com.lamfire.utils.Lists;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;

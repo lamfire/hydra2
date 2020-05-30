@@ -1,8 +1,7 @@
 package com.lamfire.hydra.netty;
 
-import com.lamfire.code.UUIDGen;
-import com.lamfire.logger.Logger;
 import com.lamfire.hydra.*;
+import com.lamfire.logger.Logger;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 

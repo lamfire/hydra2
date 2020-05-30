@@ -1,7 +1,7 @@
 package com.lamfire.hydra;
 
-import com.lamfire.utils.Asserts;
 import com.lamfire.hydra.netty.NettyClient;
+import com.lamfire.utils.Asserts;
 
 /**
  * SnakeBuilder

@@ -1,13 +1,12 @@
 package com.lamfire.hydra.netty;
 
-import com.lamfire.logger.Logger;
 import com.lamfire.hydra.SessionClosedListener;
+import com.lamfire.logger.Logger;
 import com.lamfire.utils.Lists;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.util.Collection;
-import java.util.Collections;
 
 
 class NettyChannelClosedListener implements GenericFutureListener<Future<Void>> {

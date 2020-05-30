@@ -3,7 +3,6 @@ package com.lamfire.hydra.rpc;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
 
 
 public class KryoSerializer implements RpcSerializer {

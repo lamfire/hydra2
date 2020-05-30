@@ -1,7 +1,5 @@
 package com.lamfire.hydra.rpc;
 
-import java.io.Serializable;
-
 public class RemoteException extends RpcException {
 
     public RemoteException(String message) {
