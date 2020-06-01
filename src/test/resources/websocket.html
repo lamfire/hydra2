@@ -15,30 +15,33 @@
     if (window.WebSocket) {
         socket = new WebSocket("ws://localhost:1980/ws");
         socket.onmessage = function (event) {
-        	    var ta = document.getElementById('responseText');
-                 ta.value = "";
+            var ta = document.getElementById('responseText');
+            ta.value = "";
 
-                if (event.data instanceof Blob) {
-		        var reader = new FileReader();
-		        reader.onload = () => {
-		               console.log("Result: " + reader.result);
-			        
-			        var data = reader.result;
-			        var dv = new DataView(data);
-			        var id = dv.getUint32(0);
-			        var mLen = dv.getUint32(4);
-			        var op = dv.getUint32(8);
-			        console.log("id : " + id +",len : " + mLen +",op : " + op);
-		        };
-		        reader.readAsArrayBuffer(event.data);
-		        
-		        var mReader = new FileReader();
-		        mReader.onload = () => {
-		        	console.log("Result: " + mReader.result);
-		        	ta.value =  mReader.result;
-		        };
-		        mReader.readAsText(event.data.slice(12));
-		    } 
+            if (event.data instanceof Blob) {
+                var reader = new FileReader();
+                reader.onload = () =>{
+                    console.log("Result: " + reader.result);
+
+                    var data = reader.result;
+                    var dv = new DataView(data);
+                    var id = dv.getUint32(0);
+                    var op = dv.getUint32(4);
+                    var mLen = dv.getUint32(8);
+
+                    console.log("id : " + id + ",len : " + mLen + ",op : " + op);
+                }
+                ;
+                reader.readAsArrayBuffer(event.data);
+
+                var mReader = new FileReader();
+                mReader.onload = () =>{
+                    console.log("Result: " + mReader.result);
+                    ta.value = mReader.result;
+                }
+                ;
+                mReader.readAsText(event.data.slice(12));
+            }
         };
         socket.onopen = function (event) {
             var ta = document.getElementById('responseText');
@@ -49,92 +52,90 @@
             ta.value = "";
             ta.value = "WebSocket 关闭!";
         };
-    }
-    else {
+    } else {
         alert("抱歉，您的浏览器不支持WebSocket协议!");
     }
-    
-    
+
+
     function stringToByte(str) {
-			var bytes = new Array();
-			var len, c;
-			len = str.length;
-			for(var i = 0; i < len; i++) {
-				c = str.charCodeAt(i);
-				if(c >= 0x010000 && c <= 0x10FFFF) {
-					bytes.push(((c >> 18) & 0x07) | 0xF0);
-					bytes.push(((c >> 12) & 0x3F) | 0x80);
-					bytes.push(((c >> 6) & 0x3F) | 0x80);
-					bytes.push((c & 0x3F) | 0x80);
-				} else if(c >= 0x000800 && c <= 0x00FFFF) {
-					bytes.push(((c >> 12) & 0x0F) | 0xE0);
-					bytes.push(((c >> 6) & 0x3F) | 0x80);
-					bytes.push((c & 0x3F) | 0x80);
-				} else if(c >= 0x000080 && c <= 0x0007FF) {
-					bytes.push(((c >> 6) & 0x1F) | 0xC0);
-					bytes.push((c & 0x3F) | 0x80);
-				} else {
-					bytes.push(c & 0xFF);
-				}
-			}
-			return bytes;
- 
- 
-		}
- 
- 
-		 function byteToString(arr) {
-			if(typeof arr === 'string') {
-				return arr;
-			}
-			var str = '',
-				_arr = arr;
-			for(var i = 0; i < _arr.length; i++) {
-				var one = _arr[i].toString(2),
-					v = one.match(/^1+?(?=0)/);
-				if(v && one.length == 8) {
-					var bytesLength = v[0].length;
-					var store = _arr[i].toString(2).slice(7 - bytesLength);
-					for(var st = 1; st < bytesLength; st++) {
-						store += _arr[st + i].toString(2).slice(2);
-					}
-					str += String.fromCharCode(parseInt(store, 2));
-					i += bytesLength - 1;
-				} else {
-					str += String.fromCharCode(_arr[i]);
-				}
-			}
-			return str;
-}
+        var bytes = new Array();
+        var len, c;
+        len = str.length;
+        for (var i = 0; i < len; i++) {
+            c = str.charCodeAt(i);
+            if (c >= 0x010000 && c <= 0x10FFFF) {
+                bytes.push(((c >> 18) & 0x07) | 0xF0);
+                bytes.push(((c >> 12) & 0x3F) | 0x80);
+                bytes.push(((c >> 6) & 0x3F) | 0x80);
+                bytes.push((c & 0x3F) | 0x80);
+            } else if (c >= 0x000800 && c <= 0x00FFFF) {
+                bytes.push(((c >> 12) & 0x0F) | 0xE0);
+                bytes.push(((c >> 6) & 0x3F) | 0x80);
+                bytes.push((c & 0x3F) | 0x80);
+            } else if (c >= 0x000080 && c <= 0x0007FF) {
+                bytes.push(((c >> 6) & 0x1F) | 0xC0);
+                bytes.push((c & 0x3F) | 0x80);
+            } else {
+                bytes.push(c & 0xFF);
+            }
+        }
+        return bytes;
+
+
+    }
+
+
+    function byteToString(arr) {
+        if (typeof arr === 'string') {
+            return arr;
+        }
+        var str = '',
+            _arr = arr;
+        for (var i = 0; i < _arr.length; i++) {
+            var one = _arr[i].toString(2),
+                v = one.match(/^1+?(?=0)/);
+            if (v && one.length == 8) {
+                var bytesLength = v[0].length;
+                var store = _arr[i].toString(2).slice(7 - bytesLength);
+                for (var st = 1; st < bytesLength; st++) {
+                    store += _arr[st + i].toString(2).slice(2);
+                }
+                str += String.fromCharCode(parseInt(store, 2));
+                i += bytesLength - 1;
+            } else {
+                str += String.fromCharCode(_arr[i]);
+            }
+        }
+        return str;
+    }
 
     function send(message) {
         if (!window.WebSocket) {
             return;
         }
         if (socket.readyState == WebSocket.OPEN) {
-                 var bytes  = stringToByte(message);
-                 var bodyLen = bytes.length + 12;
-        	    var buffer = new ArrayBuffer(bodyLen);
-		    var view = new DataView(buffer);
-		    view.setUint32(0, 1001);
-		    view.setUint32(4, bytes.length);
-		    view.setUint32(8, 1);
-		    
-		    for (var i = 0; i < bytes.length; i++) {
-		        view.setUint8(i + 12, bytes[i]);
-		    }
-		    socket.send(view);
-        }
-        else {
+            var bytes = stringToByte(message);
+            var bodyLen = bytes.length + 12;
+            var buffer = new ArrayBuffer(bodyLen);
+            var view = new DataView(buffer);
+            view.setUint32(0, 1001);
+            view.setUint32(4, 22);
+            view.setUint32(8, bytes.length);
+
+            for (var i = 0; i < bytes.length; i++) {
+                view.setUint8(i + 12, bytes[i]);
+            }
+            socket.send(view);
+        } else {
             alert("WebSocket连接没有建立成功!");
         }
     }
 
 </script>
 <form onsubmit="return false;">
-   <textarea id="message" name="message" style="width:500px;height:100px;">WebSocket 最佳实践</textarea>
+    <textarea id="message" name="message" style="width:500px;height:100px;">WebSocket 最佳实践</textarea>
     <br><br>
-    <input type="button" value="发送" onclick="send(this.form.message.value)"/>
+    <input onclick="send(this.form.message.value)" type="button" value="发送"/>
     <hr color="blue"/>
     <h3>服务端返回的应答消息</h3>
     <textarea id="responseText" style="width:500px;height:300px;"></textarea>

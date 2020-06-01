@@ -7,8 +7,8 @@ public class MessageSerializer {
     public void encode(Message msg, ByteBuf out){
         MessageHeader header = msg.header();
         out.writeInt(header.id());
-        out.writeInt(header.contentLength());
         out.writeInt(header.option());
+        out.writeInt(header.contentLength());
         if(header.contentLength() > 0){
             out.writeBytes(msg.content());
         }
@@ -16,8 +16,9 @@ public class MessageSerializer {
 
     public Message decode(ByteBuf buf){
         int id = buf.readInt();
-        int contentLength = buf.readInt();
         int option = buf.readInt();
+        int contentLength = buf.readInt();
+
         byte[] content = null;
 
         //is heartbeat request
