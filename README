@@ -1,5 +1,5 @@
 hydra 2.x
 
 Message package:
-Total(int)   ID(int)   BodyLength(int)   option(int)    Body(byte[])
+Total(int)   ID(int)   option(int)   BodyLength(int)    Body(byte[])
 0000        0000       0000              0000           ......
