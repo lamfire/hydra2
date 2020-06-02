@@ -33,7 +33,7 @@ public class HydraBootstrap implements MessageReceivedListener ,SessionCreatedLi
 
         HydraBootstrap sample = new HydraBootstrap();
         HydraBuilder builder = new HydraBuilder();
-        builder.bind(host).port(port).messageReceivedListener(sample).sessionCreatedListener(sample);
+        builder.bind(host).port(port).messageReceivedListener(sample).sessionCreatedListener(sample).threads(4);
 
         Hydra hydra = builder.build();
         hydra.startup();

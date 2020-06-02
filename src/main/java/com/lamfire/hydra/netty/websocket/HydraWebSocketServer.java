@@ -34,11 +34,9 @@ public class HydraWebSocketServer implements Hydra {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ChannelFuture bindFuture;
-    private ThreadPoolExecutor threadPoolExecutor;
-
     private String bind = "0.0.0.0";
     private int port = 1980;
-    private int workerThreads = 16;
+    private int workerThreads = 4;
     private String websocketPath = "/ws";
     private int maxContentLength = 65535;
 
@@ -81,12 +79,8 @@ public class HydraWebSocketServer implements Hydra {
             LOGGER.error("Bootstrap was running,system shutdown now...");
             System.exit(-1);
         }
-        if(workerThreads > 0) {
-            threadPoolExecutor = new ThreadPoolExecutor(workerThreads, workerThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new ThreadFactory("task"));
-        }
-
-        bossGroup = new NioEventLoopGroup(4, Threads.makeThreadFactory("boss"));
-        workerGroup = new NioEventLoopGroup(4, Threads.makeThreadFactory("worker"));
+        bossGroup = new NioEventLoopGroup(1, Threads.makeThreadFactory("Hydra/Boss"));
+        workerGroup = new NioEventLoopGroup(workerThreads, Threads.makeThreadFactory("Hydra/Worker"));
         try {
             bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
@@ -103,12 +97,13 @@ public class HydraWebSocketServer implements Hydra {
                             //ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
                             ch.pipeline().addLast(new WebSocketMessageDecoder());
                             ch.pipeline().addLast(new WebSocketMessageEncoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener,threadPoolExecutor));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener));
                         }
                     }).option(ChannelOption.SO_BACKLOG, 100).childOption(ChannelOption.SO_KEEPALIVE, true);
 
             bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             bindFuture = bootstrap.bind(bind,port).sync();
+            LOGGER.info("startup on - " + bind +":" + port + "["+workerThreads+"]");
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -121,21 +116,15 @@ public class HydraWebSocketServer implements Hydra {
         }catch (Exception e){
 
         }
-
         LOGGER.info("Shutdown worker group...");
         workerGroup.shutdownGracefully();
 
         LOGGER.info("Shutdown boss group...");
         bossGroup.shutdownGracefully();
-
-        threadPoolExecutor.shutdown();
-
-
         bossGroup = null;
         workerGroup = null;
         bindFuture = null;
         bootstrap = null;
-        threadPoolExecutor= null;
     }
 
     @Override

@@ -13,7 +13,7 @@ import com.lamfire.utils.Asserts;
 public class SnakeBuilder {
     private String host;
     private int port = 1980;
-    private int threads = 16;
+    private int threads = 1;
     private MessageReceivedListener  messageReceivedListener;
     private boolean heartbeatEnable = false;
     private boolean autoConnectRetry = false;

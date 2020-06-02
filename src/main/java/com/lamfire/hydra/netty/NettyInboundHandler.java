@@ -14,15 +14,13 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     private HeartbeatListener heartbeatListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
-    private ThreadPoolExecutor threadPoolExecutor;
 
-    public NettyInboundHandler(HydraSessionMgr sessionMgr, MessageReceivedListener messageReceivedListener, HeartbeatListener heartbeatListener, SessionCreatedListener sessionCreatedListener, SessionClosedListener sessionClosedListener, ThreadPoolExecutor threadPoolExecutor){
+    public NettyInboundHandler(HydraSessionMgr sessionMgr, MessageReceivedListener messageReceivedListener, HeartbeatListener heartbeatListener, SessionCreatedListener sessionCreatedListener, SessionClosedListener sessionClosedListener){
         this.sessionMgr = sessionMgr;
         this.messageReceivedListener = messageReceivedListener;
         this.heartbeatListener = heartbeatListener;
         this.sessionCreatedListener = sessionCreatedListener;
         this.sessionClosedListener = sessionClosedListener;
-        this.threadPoolExecutor = threadPoolExecutor;
     }
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -38,21 +36,8 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        if(messageReceivedListener == null){
-            return;
-        }
-
-        if(msg instanceof Message){
-            Message m = (Message) msg;
-            if(threadPoolExecutor != null) {
-                NettyHandleTask task = new NettyHandleTask();
-                task.setMessageReceivedListener(messageReceivedListener);
-                task.setMessage(m);
-                task.setSession(session);
-                this.threadPoolExecutor.submit(task);
-                return;
-            }
-            messageReceivedListener.onMessageReceived(session, m);
+        if(messageReceivedListener != null && msg instanceof Message) {
+            messageReceivedListener.onMessageReceived(session, (Message)msg);
         }
     }
 

@@ -24,7 +24,7 @@ public class PerformenceTest implements MessageReceivedListener {
 
     public static void main(String[] args) throws Exception {
         SnakeBuilder builder = new SnakeBuilder();
-        builder.host("127.0.0.1").port(1980).messageReceivedListener(new PerformenceTest()).heartbeatEnable(true).heartbeatInterval(5000);
+        builder.host("127.0.0.1").port(1980).threads(4).messageReceivedListener(new PerformenceTest()).heartbeatEnable(true).heartbeatInterval(5000);
 
         Snake snake = builder.build();
         snake.startup();
