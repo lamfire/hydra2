@@ -8,7 +8,7 @@ import com.lamfire.utils.StringUtils;
 
 import java.lang.reflect.Method;
 
-public class InvokeTask implements Runnable{
+public class InvokeTask implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(InvokeTask.class);
     private Session session;
     private Message message;
@@ -52,13 +52,13 @@ public class InvokeTask implements Runnable{
         byte[] resultBytes = null;
         try {
             byte[] bytes = message.content();
-            Invocation msg = serializer.decode(bytes,Invocation.class);
+            Invocation msg = serializer.decode(bytes, Invocation.class);
             invoke(msg);
             resultBytes = serializer.encode(msg);
-        }catch (Throwable t){
-            LOGGER.error(t.getMessage(),t);
-        }finally {
-            session.send(MessageFactory.makeMessage(message.getId(),message.getOption(),resultBytes));
+        } catch (Throwable t) {
+            LOGGER.error(t.getMessage(), t);
+        } finally {
+            session.send(MessageFactory.makeMessage(message.getId(), message.getOption(), resultBytes));
         }
     }
 
@@ -70,7 +70,7 @@ public class InvokeTask implements Runnable{
             Object result = method.invoke(instance, msg.getParameters());
             msg.setStatus(Invocation.STATUS_RESPONSE);
             msg.setReturnValue(result);
-        } catch(Throwable t){
+        } catch (Throwable t) {
             //LOGGER.debug(t.getMessage(),t);
             msg.setStatus(Invocation.STATUS_EXCEPTION);
             msg.setReturnValue(StringUtils.dumpStackTraceAsString(t));

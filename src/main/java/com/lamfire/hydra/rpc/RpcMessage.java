@@ -2,7 +2,7 @@ package com.lamfire.hydra.rpc;
 
 import java.io.Serializable;
 
-class RpcMessage implements Serializable{
+class RpcMessage implements Serializable {
     private Class<?> rpcInterface;
     private String methodName;
     private Class<?>[] parameterTypes;

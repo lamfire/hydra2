@@ -14,49 +14,49 @@ public class HydraBuilder {
     private String bind = "0.0.0.0";
     private int port = 1980;
     private int threads = 16;
-    private MessageReceivedListener  messageReceivedListener;
+    private MessageReceivedListener messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
     private HeartbeatListener heartbeatListener = new DefaultHeartbeatListener();
 
-    public HydraBuilder bind(String bind){
+    public HydraBuilder bind(String bind) {
         this.bind = bind;
         return this;
     }
 
-    public HydraBuilder port(int port){
+    public HydraBuilder port(int port) {
         this.port = port;
         return this;
     }
 
-    public HydraBuilder heartbeatListener(HeartbeatListener heartbeatListener){
+    public HydraBuilder heartbeatListener(HeartbeatListener heartbeatListener) {
         this.heartbeatListener = heartbeatListener;
         return this;
     }
 
-    public HydraBuilder threads(int threads){
+    public HydraBuilder threads(int threads) {
         this.threads = threads;
         return this;
     }
 
-    public HydraBuilder messageReceivedListener(MessageReceivedListener listener){
+    public HydraBuilder messageReceivedListener(MessageReceivedListener listener) {
         this.messageReceivedListener = listener;
         return this;
     }
 
-    public HydraBuilder sessionCreatedListener(SessionCreatedListener listener){
+    public HydraBuilder sessionCreatedListener(SessionCreatedListener listener) {
         this.sessionCreatedListener = listener;
         return this;
     }
 
-    public HydraBuilder sessionClosedListener(SessionClosedListener sessionClosedListener){
+    public HydraBuilder sessionClosedListener(SessionClosedListener sessionClosedListener) {
         this.sessionClosedListener = sessionClosedListener;
         return this;
     }
 
-    public Hydra build(){
+    public Hydra build() {
         Asserts.notNullAssert(messageReceivedListener);
-        NettyServer server = new NettyServer(bind,port);
+        NettyServer server = new NettyServer(bind, port);
         server.setMessageReceivedListener(messageReceivedListener);
         server.setHeartbeatListener(heartbeatListener);
         server.setSessionCreatedListener(sessionCreatedListener);

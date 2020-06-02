@@ -14,9 +14,11 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 
 import java.util.Collection;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class NettyClient implements Snake,SessionCreatedListener {
+public class NettyClient implements Snake, SessionCreatedListener {
     private static final Logger LOGGER = Logger.getLogger(NettyClient.class);
     private final HydraSessionMgr mgr = new HydraSessionMgr("NettyClient");
     private MessageReceivedListener messageReceivedListener;
@@ -24,7 +26,7 @@ public class NettyClient implements Snake,SessionCreatedListener {
     private SessionClosedListener sessionClosedListener;
     private Bootstrap bootstrap;
     private EventLoopGroup workerGroup;
-    private ScheduledExecutorService monitorService ;
+    private ScheduledExecutorService monitorService;
     private boolean heartbeatEnable = false;
     private int heartbeatInterval = 300000;
     private HeartbeatListener heartbeatListener;
@@ -33,13 +35,50 @@ public class NettyClient implements Snake,SessionCreatedListener {
     private int connectionTimeout = 15000;
     private String host;
     private int port = 1980;
+    Runnable heartbeatTask = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Collection<Session> sessions = mgr.all();
+
+                LOGGER.debug("[HEARTBEAT] Active sessions = " + sessions.size());
+
+                if (sessions.isEmpty() && autoConnectRetry) {
+                    LOGGER.debug("[HEARTBEAT] retry connect to = " + host + ":" + port);
+                    connect();
+                }
+                for (Session s : sessions) {
+                    if (s.isActive() && s.isWritable()) {
+                        s.heartbeat();
+                    }
+                }
+            } catch (Throwable t) {
+                LOGGER.error(t.getMessage(), t);
+            }
+        }
+    };
+    Runnable autoConnectTask = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Collection<Session> sessions = mgr.all();
+                if (sessions.isEmpty() && autoConnectRetry) {
+                    LOGGER.debug("[AUTO_CONNECT_RETRY] retry connect to = " + host + ":" + port);
+                    connect();
+                }
+
+            } catch (Throwable t) {
+                LOGGER.error(t.getMessage(), t);
+            }
+        }
+    };
     private int workerThreads = 1;
 
-    public NettyClient(int port){
+    public NettyClient(int port) {
         this.port = port;
     }
 
-    public NettyClient(String host, int port){
+    public NettyClient(String host, int port) {
         this.host = host;
         this.port = port;
     }
@@ -56,11 +95,11 @@ public class NettyClient implements Snake,SessionCreatedListener {
         this.heartbeatListener = heartbeatListener;
     }
 
-    public void setSessionCreatedListener(SessionCreatedListener listener){
+    public void setSessionCreatedListener(SessionCreatedListener listener) {
         this.sessionCreatedListener = listener;
     }
 
-    public void setSessionClosedListener(SessionClosedListener sessionClosedListener){
+    public void setSessionClosedListener(SessionClosedListener sessionClosedListener) {
         this.sessionClosedListener = sessionClosedListener;
     }
 
@@ -89,7 +128,7 @@ public class NettyClient implements Snake,SessionCreatedListener {
     }
 
     public synchronized void startup() {
-        if(bootstrap != null){
+        if (bootstrap != null) {
             LOGGER.error("Bootstrap was running,ignore...");
             return;
         }
@@ -104,13 +143,13 @@ public class NettyClient implements Snake,SessionCreatedListener {
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
                             ch.pipeline().addLast(new HydraMessageEncoder());
                             ch.pipeline().addLast(new HydraMessageDecoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener,NettyClient.this,sessionClosedListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener, NettyClient.this, sessionClosedListener));
                         }
                     });
 
-            bootstrap.connect(host,port).await();
-        }catch (Exception e){
-            LOGGER.error(e.getMessage(),e);
+            bootstrap.connect(host, port).await();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
         //startup heartbeat
         startupHeartbeatTask();
@@ -118,58 +157,57 @@ public class NettyClient implements Snake,SessionCreatedListener {
         waitConnections();
     }
 
-
-    private synchronized ScheduledExecutorService getMonitorService(){
-        if(monitorService == null){
+    private synchronized ScheduledExecutorService getMonitorService() {
+        if (monitorService == null) {
             monitorService = Executors.newSingleThreadScheduledExecutor(Threads.makeThreadFactory("Hydra/monitor"));
         }
         return monitorService;
     }
 
-    private synchronized void startupHeartbeatTask(){
-        if(heartbeatEnable ){
-            getMonitorService().scheduleWithFixedDelay(heartbeatTask,heartbeatInterval,heartbeatInterval, TimeUnit.MILLISECONDS);
+    private synchronized void startupHeartbeatTask() {
+        if (heartbeatEnable) {
+            getMonitorService().scheduleWithFixedDelay(heartbeatTask, heartbeatInterval, heartbeatInterval, TimeUnit.MILLISECONDS);
         }
     }
 
-    private synchronized void startupAutoConnectRetryTask(){
-        if(autoConnectRetry ){
-            getMonitorService().scheduleWithFixedDelay(autoConnectTask,autoConnectRetryInterval,autoConnectRetryInterval, TimeUnit.MILLISECONDS);
+    private synchronized void startupAutoConnectRetryTask() {
+        if (autoConnectRetry) {
+            getMonitorService().scheduleWithFixedDelay(autoConnectTask, autoConnectRetryInterval, autoConnectRetryInterval, TimeUnit.MILLISECONDS);
         }
     }
 
-    public synchronized void waitConnections(){
-        if(mgr.isEmpty()){
+    public synchronized void waitConnections() {
+        if (mgr.isEmpty()) {
             try {
                 this.wait(connectionTimeout);
-            }catch (Throwable t){
+            } catch (Throwable t) {
 
             }
         }
     }
 
-    ChannelFuture connect(){
-        if(bootstrap == null){
+    ChannelFuture connect() {
+        if (bootstrap == null) {
             throw new RuntimeException("The client not startup.");
         }
-        return bootstrap.connect(host,port);
+        return bootstrap.connect(host, port);
     }
 
-    public synchronized void shutdown(){
+    public synchronized void shutdown() {
         try {
-            if(monitorService != null){
+            if (monitorService != null) {
                 LOGGER.info("Shutdown monitor...");
                 monitorService.shutdown();
                 monitorService = null;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
         try {
             LOGGER.info("Shutdown channel...");
             mgr.close();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         LOGGER.info("Shutdown worker group...");
@@ -196,14 +234,14 @@ public class NettyClient implements Snake,SessionCreatedListener {
 
     @Override
     public Session getSession() {
-        if(mgr.isEmpty()){
-           return null;
+        if (mgr.isEmpty()) {
+            return null;
         }
         return mgr.all().iterator().next();
     }
 
-    public synchronized void waitAvailable(){
-        if(!isAvailable()){
+    public synchronized void waitAvailable() {
+        if (!isAvailable()) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
@@ -212,8 +250,8 @@ public class NettyClient implements Snake,SessionCreatedListener {
         }
     }
 
-    public synchronized void waitAvailable(long millis){
-        if(!isAvailable()){
+    public synchronized void waitAvailable(long millis) {
+        if (!isAvailable()) {
             try {
                 this.wait(millis);
             } catch (InterruptedException e) {
@@ -224,55 +262,13 @@ public class NettyClient implements Snake,SessionCreatedListener {
 
     @Override
     public boolean isAvailable() {
-        if(!mgr.isEmpty()){
-            return true;
-        }
-        return false;
+        return !mgr.isEmpty();
     }
-
-    Runnable heartbeatTask = new Runnable() {
-        @Override
-        public void run() {
-            try{
-                Collection<Session> sessions = mgr.all();
-
-                LOGGER.debug("[HEARTBEAT] Active sessions = " + sessions.size());
-
-                if(sessions.isEmpty() && autoConnectRetry){
-                    LOGGER.debug("[HEARTBEAT] retry connect to = " + host +":" + port);
-                    connect();
-                }
-                for(Session s : sessions){
-                    if(s.isActive() && s.isWritable()){
-                        s.heartbeat();
-                    }
-                }
-            }catch (Throwable t){
-                LOGGER.error(t.getMessage(),t);
-            }
-        }
-    };
-
-    Runnable autoConnectTask = new Runnable() {
-        @Override
-        public void run() {
-            try{
-                Collection<Session> sessions = mgr.all();
-                if(sessions.isEmpty() && autoConnectRetry){
-                    LOGGER.debug("[AUTO_CONNECT_RETRY] retry connect to = " + host +":" + port);
-                    connect();
-                }
-
-            }catch (Throwable t){
-                LOGGER.error(t.getMessage(),t);
-            }
-        }
-    };
 
     @Override
     public synchronized void onCreated(Session session) {
         this.notifyAll();
-        if(this.sessionCreatedListener != null){
+        if (this.sessionCreatedListener != null) {
             this.sessionCreatedListener.onCreated(session);
         }
     }

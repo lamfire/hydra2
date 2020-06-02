@@ -14,12 +14,13 @@ import java.util.List;
 
 public class WebSocketMessageEncoder extends MessageToMessageEncoder<Message> {
     MessageSerializer serializer = new MessageSerializer();
+
     @Override
-    protected void encode(ChannelHandlerContext ctx, Message msg, List<Object> out){
+    protected void encode(ChannelHandlerContext ctx, Message msg, List<Object> out) {
         MessageHeader header = msg.header();
         int bytesLen = header.contentLength() + 12;
         ByteBuf buffer = ctx.alloc().buffer(bytesLen);
-        serializer.encode(msg,buffer);
+        serializer.encode(msg, buffer);
         WebSocketFrame frame = new BinaryWebSocketFrame(buffer);
         out.add(frame);
     }

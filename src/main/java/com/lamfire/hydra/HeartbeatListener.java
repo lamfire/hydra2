@@ -8,5 +8,5 @@ package com.lamfire.hydra;
  * To change this template use File | Settings | File Templates.
  */
 public interface HeartbeatListener {
-    public void onHeartbeat(Session session, HeartbeatMessage message);
+    void onHeartbeat(Session session, HeartbeatMessage message);
 }

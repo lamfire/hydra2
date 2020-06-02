@@ -19,16 +19,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ReplySnake implements MessageReceivedListener {
     final ScheduledExecutorService cleanService = Executors.newSingleThreadScheduledExecutor(Threads.makeThreadFactory("FutureTimeoutClean"));
-    final Map<Integer,Future> replys = Maps.newConcurrentMap();
+    final Map<Integer, Future> replys = Maps.newConcurrentMap();
     final AtomicInteger counter = new AtomicInteger();
 
-    private int threads  = 4;
+    private int threads = 4;
     private long readTimeoutMillis = 30000;
     private int heartbeatIntervalMillis = 300000;
     private boolean heartbeatEnable = true;
     private boolean autoConnectRetry = true;
 
-    private Snake snake ;
+    private Snake snake;
 
     public int getThreads() {
         return threads;
@@ -46,8 +46,8 @@ public class ReplySnake implements MessageReceivedListener {
         this.autoConnectRetry = autoConnectRetry;
     }
 
-    public synchronized void startup(String host, int port){
-        if(snake != null){
+    public synchronized void startup(String host, int port) {
+        if (snake != null) {
             return;
         }
         SnakeBuilder builder = new SnakeBuilder();
@@ -55,26 +55,26 @@ public class ReplySnake implements MessageReceivedListener {
         builder.threads(threads).autoConnectRetry(autoConnectRetry);
         snake = builder.build();
         snake.startup();
-        cleanService.scheduleWithFixedDelay(new FutureTimeoutClean(replys),15,15,TimeUnit.SECONDS);
+        cleanService.scheduleWithFixedDelay(new FutureTimeoutClean(replys), 15, 15, TimeUnit.SECONDS);
     }
 
-    public synchronized void waitConnections(){
+    public synchronized void waitConnections() {
         snake.waitConnections();
     }
 
-    public boolean isAvailable(){
-        if(snake == null){
+    public boolean isAvailable() {
+        if (snake == null) {
             return false;
         }
         return snake.isAvailable();
     }
 
 
-    public void shutdown(){
-        if(cleanService != null){
+    public void shutdown() {
+        if (cleanService != null) {
             cleanService.shutdown();
         }
-        if(snake != null){
+        if (snake != null) {
             snake.shutdown();
             snake = null;
         }
@@ -104,27 +104,26 @@ public class ReplySnake implements MessageReceivedListener {
         this.heartbeatEnable = heartbeatEnable;
     }
 
-    public Future send(byte[] bytes){
-        Message m = MessageFactory.message(counter.incrementAndGet(),0,bytes);
+    public Future send(byte[] bytes) {
+        Message m = MessageFactory.message(counter.incrementAndGet(), 0, bytes);
         Future f = new Future();
         f.setTimeout(readTimeoutMillis);
-        replys.put(m.header().id(),f);
+        replys.put(m.header().id(), f);
         snake.getSession().send(m);
         return f;
     }
-
 
 
     @Override
     public void onMessageReceived(Session session, Message message) {
         Integer id = message.header().id();
         Future f = replys.remove(id);
-        if(f != null){
+        if (f != null) {
             f.onResponse(message);
         }
     }
 
-    public int getSendCount(){
+    public int getSendCount() {
         return counter.get();
     }
 }

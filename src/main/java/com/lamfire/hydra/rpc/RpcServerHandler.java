@@ -15,11 +15,11 @@ class RpcServerHandler implements MessageReceivedListener {
     private RpcSerializer serializer;
     private ServiceRegistryConfig serviceRegistry;
 
-    public RpcServerHandler(){
+    public RpcServerHandler() {
 
     }
 
-    public void setServiceRegistry(ServiceRegistryConfig serviceRegistry){
+    public void setServiceRegistry(ServiceRegistryConfig serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
@@ -36,13 +36,13 @@ class RpcServerHandler implements MessageReceivedListener {
         byte[] resultBytes = null;
         try {
             byte[] bytes = message.content();
-            Invocation msg = serializer.decode(bytes,Invocation.class);
+            Invocation msg = serializer.decode(bytes, Invocation.class);
             invoke(msg);
             resultBytes = serializer.encode(msg);
-        }catch (Throwable t){
-            LOGGER.error(t.getMessage(),t);
-        }finally {
-            session.send(MessageFactory.makeMessage(message.getId(),message.getOption(),resultBytes));
+        } catch (Throwable t) {
+            LOGGER.error(t.getMessage(), t);
+        } finally {
+            session.send(MessageFactory.makeMessage(message.getId(), message.getOption(), resultBytes));
         }
     }
 
@@ -54,7 +54,7 @@ class RpcServerHandler implements MessageReceivedListener {
             Object result = method.invoke(instance, msg.getParameters());
             msg.setStatus(Invocation.STATUS_RESPONSE);
             msg.setReturnValue(result);
-        } catch(Throwable t){
+        } catch (Throwable t) {
             //LOGGER.debug(t.getMessage(),t);
             msg.setStatus(Invocation.STATUS_EXCEPTION);
             msg.setReturnValue(StringUtils.dumpStackTraceAsString(t));

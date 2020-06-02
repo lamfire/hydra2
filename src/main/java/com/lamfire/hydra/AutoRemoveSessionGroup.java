@@ -13,14 +13,14 @@ public class AutoRemoveSessionGroup {
 
     private static final Logger LOGGER = Logger.getLogger(AutoRemoveSessionGroup.class);
     private static final String SESSION_ATTR_KEY = "_G_K";
-    private final Map<Object,Session> sessions = Maps.newConcurrentMap();
+    private final Map<Object, Session> sessions = Maps.newConcurrentMap();
 
     private final String name;
 
     private final SessionClosedListener closedListener = new SessionClosedListener() {
 
         public void onClosed(Session session) {
-            LOGGER.debug("[REMOVE]{"+name+"} session was closed,remove it -> " + session);
+            LOGGER.debug("[REMOVE]{" + name + "} session was closed,remove it -> " + session);
             _remove(session);
         }
     };
@@ -31,11 +31,11 @@ public class AutoRemoveSessionGroup {
     }
 
     public void put(Object key, Session session) {
-        if(session == null){
+        if (session == null) {
             return;
         }
-        sessions.put(key,session);
-        session.attr(SESSION_ATTR_KEY,key);
+        sessions.put(key, session);
+        session.attr(SESSION_ATTR_KEY, key);
         session.addCloseListener(closedListener);
     }
 
@@ -50,25 +50,24 @@ public class AutoRemoveSessionGroup {
     }
 
 
-
-    private void _remove(Session session){
-        if(session == null){
+    private void _remove(Session session) {
+        if (session == null) {
             return;
         }
         Object key = session.attr(SESSION_ATTR_KEY);
-        if(key != null) {
+        if (key != null) {
             sessions.remove(key);
             session.removeCloseListener(closedListener);
         }
     }
 
-    public void remove(Object key){
+    public void remove(Object key) {
         Session session = sessions.remove(key);
         _remove(session);
     }
 
-    public void close(){
-        for(Session s : sessions.values()){
+    public void close() {
+        for (Session s : sessions.values()) {
             s.close();
         }
     }

@@ -14,24 +14,24 @@ class HydraMessage implements Message {
     private final MessageHeader header = new MessageHeader();
     private byte[] content;
 
-    HydraMessage(){
+    HydraMessage() {
 
     }
 
-    HydraMessage(int id,byte[] content){
+    HydraMessage(int id, byte[] content) {
         id(id);
         content(content);
     }
 
-    public void id(int id){
+    public void id(int id) {
         header.id(id);
     }
 
-    public int id(){
+    public int id() {
         return header.id();
     }
 
-        @Override
+    @Override
     public MessageHeader header() {
         return header;
     }
@@ -67,7 +67,7 @@ class HydraMessage implements Message {
 
     @Override
     public String getContentAsString(String charset) {
-        if(content == null){
+        if (content == null) {
             return null;
         }
         return new String(content, Charset.forName(charset));

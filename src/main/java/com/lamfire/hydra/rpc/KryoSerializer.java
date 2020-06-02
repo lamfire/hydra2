@@ -25,24 +25,24 @@ public class KryoSerializer implements RpcSerializer {
 
     @Override
     public synchronized byte[] encode(Object obj) {
-        ByteBufferOutput output = new ByteBufferOutput(BUFFER_SIZE,maxBuffer);
-        try{
+        ByteBufferOutput output = new ByteBufferOutput(BUFFER_SIZE, maxBuffer);
+        try {
             kryo.writeClassAndObject(output, obj);
             return output.toBytes();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             output.close();
         }
     }
 
-    public synchronized <T> T decode(byte[] bytes,Class<T> cls) {
+    public synchronized <T> T decode(byte[] bytes, Class<T> cls) {
         Input input = new Input(bytes);
-        try{
-            return (T)kryo.readClassAndObject(input);
-        }catch (Exception e) {
+        try {
+            return (T) kryo.readClassAndObject(input);
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             input.close();
         }
     }

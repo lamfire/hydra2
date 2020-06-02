@@ -10,17 +10,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class HydraRPC implements DiscoveryListener,RPC{
+public class HydraRPC implements DiscoveryListener, RPC {
     private static final Logger LOGGER = Logger.getLogger(HydraRPC.class);
+    private final ProviderPool pool = new ProviderPool();
+    private final Set<Class<?>> services = new HashSet<Class<?>>();
+    private final Map<Class<?>, Object> interfaceProxyInstances = Maps.newHashMap();
     private DiscoveryConfig discoveryConfig;
     private DiscoveryMultiCaster discoveryMultiCaster;
-    private final ProviderPool pool = new ProviderPool();
     private RpcSerializer serializer = Serials.DEFAULT_SERIALIZER;
-    private final Set<Class<?>> services = new HashSet<Class<?>>();
-    private final Map<Class<?>,Object> interfaceProxyInstances = Maps.newHashMap();
     private boolean enableDiscovery = false;
 
-    public synchronized void addProvider(ProviderConfig config){
+    public synchronized void addProvider(ProviderConfig config) {
         pool.addProvider(config);
         this.notifyAll();
     }
@@ -43,24 +43,24 @@ public class HydraRPC implements DiscoveryListener,RPC{
         this.discoveryConfig = discoveryConfig;
     }
 
-    public synchronized  <T> T lookup(Class<?> interfaceClass){
+    public synchronized <T> T lookup(Class<?> interfaceClass) {
         Object instance = interfaceProxyInstances.get(interfaceClass);
-        if(instance != null) {
-            return (T)instance;
+        if (instance != null) {
+            return (T) instance;
         }
         Collection<Class<?>> services = services();
-        if(!services.contains(interfaceClass)){
+        if (!services.contains(interfaceClass)) {
             throw new RpcException("RPC service not found : " + interfaceClass);
         }
 
         instance = createRpcProxy(interfaceClass);
-        interfaceProxyInstances.put(interfaceClass,instance);
-        return (T)instance;
+        interfaceProxyInstances.put(interfaceClass, instance);
+        return (T) instance;
     }
 
     @Override
     public synchronized Set<Class<?>> services() {
-        if(!services.isEmpty()){
+        if (!services.isEmpty()) {
             return services;
         }
         RPC rpc = createRpcProxy(RPC.class);
@@ -68,19 +68,19 @@ public class HydraRPC implements DiscoveryListener,RPC{
         return services;
     }
 
-    private <T> T createRpcProxy(Class<?> interfaceClass){
-        return ProxyManager.getProxy(interfaceClass,pool,serializer);
+    private <T> T createRpcProxy(Class<?> interfaceClass) {
+        return ProxyManager.getProxy(interfaceClass, pool, serializer);
     }
 
-    public void startupDiscovery(){
-        if(this.discoveryConfig == null){
+    public void startupDiscovery() {
+        if (this.discoveryConfig == null) {
             throw new RuntimeException("Not found DiscoveryConfig ,please use 'setDiscoveryConfig' to setting");
         }
         startupDiscovery(this.discoveryConfig);
     }
 
-    public void startupDiscovery(DiscoveryConfig discoveryConfig){
-        if(discoveryConfig == null){
+    public void startupDiscovery(DiscoveryConfig discoveryConfig) {
+        if (discoveryConfig == null) {
             throw new IllegalArgumentException("The arg 'iscoveryConfig' cannot be 'null'");
         }
         this.discoveryConfig = discoveryConfig;
@@ -89,17 +89,17 @@ public class HydraRPC implements DiscoveryListener,RPC{
             discoveryMultiCaster.setOnMessageListener(this);
             discoveryMultiCaster.startup();
             sendDiscoveryRequest();
-        }catch (Exception e){
-            LOGGER.error("Not starting discovery ",e);
+        } catch (Exception e) {
+            LOGGER.error("Not starting discovery ", e);
         }
     }
 
-    public boolean hashAvailableProviders(){
+    public boolean hashAvailableProviders() {
         return !this.pool.isEmpty();
     }
 
-    public synchronized void waitProviders(long timeMillis){
-        if(pool.isEmpty()) {
+    public synchronized void waitProviders(long timeMillis) {
+        if (pool.isEmpty()) {
             try {
                 this.wait(timeMillis);
             } catch (Exception e) {
@@ -108,8 +108,8 @@ public class HydraRPC implements DiscoveryListener,RPC{
         }
     }
 
-    public synchronized void waitProviders(){
-        if(pool.isEmpty()) {
+    public synchronized void waitProviders() {
+        if (pool.isEmpty()) {
             try {
                 this.wait();
             } catch (Exception e) {
@@ -118,7 +118,7 @@ public class HydraRPC implements DiscoveryListener,RPC{
         }
     }
 
-    private void sendDiscoveryRequest(){
+    private void sendDiscoveryRequest() {
         DiscoveryMessage dm = new DiscoveryMessage();
         dm.setType(DiscoveryMessage.TYPE_REQUEST);
         dm.setDiscoveryConfig(discoveryConfig);
@@ -126,8 +126,8 @@ public class HydraRPC implements DiscoveryListener,RPC{
         dm.setWhere(discoveryConfig.getGroupId());
         try {
             discoveryMultiCaster.send(serializer.encode(dm));
-        }catch (Exception e){
-            LOGGER.error(e.getMessage(),e);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -149,13 +149,13 @@ public class HydraRPC implements DiscoveryListener,RPC{
 
     @Override
     public void onDiscoveryMessage(DiscoveryContext context, byte[] message) {
-        DiscoveryMessage dm = serializer.decode(message,DiscoveryMessage.class);
+        DiscoveryMessage dm = serializer.decode(message, DiscoveryMessage.class);
         //LOGGER.debug("onDiscoveryMessage -------------------------" + dm);
-        if(dm.getType() == DiscoveryMessage.TYPE_RESPONSE ){
+        if (dm.getType() == DiscoveryMessage.TYPE_RESPONSE) {
             DiscoveryConfig dc = dm.getDiscoveryConfig();
-            if(dc != null && StringUtils.equals(dc.getGroupId(),this.discoveryConfig.getGroupId())) {
+            if (dc != null && StringUtils.equals(dc.getGroupId(), this.discoveryConfig.getGroupId())) {
                 ProviderConfig pc = dc.getProviderConfig();
-                if (pc != null ) {
+                if (pc != null) {
                     LOGGER.info("Add Provider from discovery : " + pc);
                     this.addProvider(pc);
                 }

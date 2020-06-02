@@ -16,58 +16,59 @@ public class WebSocketHydraBuilder {
     private int threads = 16;
     private String websocketPath = "/ws";
     private int maxContentLength = 65535;
-    private MessageReceivedListener  messageReceivedListener;
+    private MessageReceivedListener messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
     private HeartbeatListener heartbeatListener = new DefaultHeartbeatListener();
 
-    public WebSocketHydraBuilder bind(String bind){
+    public WebSocketHydraBuilder bind(String bind) {
         this.bind = bind;
         return this;
     }
 
-    public WebSocketHydraBuilder port(int port){
+    public WebSocketHydraBuilder port(int port) {
         this.port = port;
         return this;
     }
 
-    public WebSocketHydraBuilder heartbeatListener(HeartbeatListener heartbeatListener){
+    public WebSocketHydraBuilder heartbeatListener(HeartbeatListener heartbeatListener) {
         this.heartbeatListener = heartbeatListener;
         return this;
     }
 
-    public WebSocketHydraBuilder threads(int threads){
+    public WebSocketHydraBuilder threads(int threads) {
         this.threads = threads;
         return this;
     }
 
-    public WebSocketHydraBuilder messageReceivedListener(MessageReceivedListener listener){
+    public WebSocketHydraBuilder messageReceivedListener(MessageReceivedListener listener) {
         this.messageReceivedListener = listener;
         return this;
     }
 
-    public WebSocketHydraBuilder sessionCreatedListener(SessionCreatedListener listener){
+    public WebSocketHydraBuilder sessionCreatedListener(SessionCreatedListener listener) {
         this.sessionCreatedListener = listener;
         return this;
     }
 
-    public WebSocketHydraBuilder sessionClosedListener(SessionClosedListener sessionClosedListener){
+    public WebSocketHydraBuilder sessionClosedListener(SessionClosedListener sessionClosedListener) {
         this.sessionClosedListener = sessionClosedListener;
         return this;
     }
-    public WebSocketHydraBuilder websocketPath(String websocketPath){
+
+    public WebSocketHydraBuilder websocketPath(String websocketPath) {
         this.websocketPath = websocketPath;
         return this;
     }
 
-    public WebSocketHydraBuilder maxContentLength(int maxContentLength){
+    public WebSocketHydraBuilder maxContentLength(int maxContentLength) {
         this.maxContentLength = maxContentLength;
         return this;
     }
 
-    public Hydra build(){
+    public Hydra build() {
         Asserts.notNullAssert(messageReceivedListener);
-        HydraWebSocketServer server = new HydraWebSocketServer(bind,port);
+        HydraWebSocketServer server = new HydraWebSocketServer(bind, port);
         server.setMessageReceivedListener(messageReceivedListener);
         server.setHeartbeatListener(heartbeatListener);
         server.setSessionCreatedListener(sessionCreatedListener);

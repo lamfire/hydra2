@@ -2,7 +2,6 @@ package com.lamfire.hydra.netty;
 
 import com.lamfire.hydra.*;
 import com.lamfire.logger.Logger;
-import com.lamfire.utils.ThreadFactory;
 import com.lamfire.utils.Threads;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -15,10 +14,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 public class NettyServer implements Hydra {
@@ -37,11 +32,11 @@ public class NettyServer implements Hydra {
     private int port = 1980;
     private int workerThreads = Runtime.getRuntime().availableProcessors() * 4;
 
-    public NettyServer(int port){
+    public NettyServer(int port) {
         this.port = port;
     }
 
-    public NettyServer(String bind, int port){
+    public NettyServer(String bind, int port) {
         this.bind = bind;
         this.port = port;
     }
@@ -58,11 +53,11 @@ public class NettyServer implements Hydra {
         this.heartbeatListener = heartbeatListener;
     }
 
-    public void setSessionCreatedListener(SessionCreatedListener listener){
+    public void setSessionCreatedListener(SessionCreatedListener listener) {
         this.sessionCreatedListener = listener;
     }
 
-    public void setSessionClosedListener(SessionClosedListener sessionClosedListener){
+    public void setSessionClosedListener(SessionClosedListener sessionClosedListener) {
         this.sessionClosedListener = sessionClosedListener;
     }
 
@@ -72,7 +67,7 @@ public class NettyServer implements Hydra {
     }
 
     public synchronized void startup() {
-        if(bootstrap != null){
+        if (bootstrap != null) {
             LOGGER.error("Bootstrap was already running,system shutdown now...");
             System.exit(-1);
         }
@@ -87,26 +82,26 @@ public class NettyServer implements Hydra {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new LengthFieldPrepender(4, false));
-                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
+                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
                             ch.pipeline().addLast(new HydraMessageDecoder());
                             ch.pipeline().addLast(new HydraMessageEncoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener, sessionCreatedListener, sessionClosedListener));
                         }
                     }).option(ChannelOption.SO_BACKLOG, 100).childOption(ChannelOption.SO_KEEPALIVE, true);
 
             bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
-            bindFuture = bootstrap.bind(bind,port).sync();
-            LOGGER.info("startup on - " + bind +":" + port + "["+workerThreads+"]");
-        }catch (Exception e){
+            bindFuture = bootstrap.bind(bind, port).sync();
+            LOGGER.info("startup on - " + bind + ":" + port + "[" + workerThreads + "]");
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public synchronized void shutdown(){
+    public synchronized void shutdown() {
         try {
             LOGGER.info("Shutdown listener channel...");
             bindFuture.channel().close().sync();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 

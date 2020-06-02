@@ -8,5 +8,5 @@ package com.lamfire.hydra;
  * To change this template use File | Settings | File Templates.
  */
 public interface SessionCreatedListener {
-    public void onCreated(Session session);
+    void onCreated(Session session);
 }

@@ -14,7 +14,7 @@ public class SnakeBuilder {
     private String host;
     private int port = 1980;
     private int threads = 1;
-    private MessageReceivedListener  messageReceivedListener;
+    private MessageReceivedListener messageReceivedListener;
     private boolean heartbeatEnable = false;
     private boolean autoConnectRetry = false;
     private int heartbeatInterval = 15000;
@@ -22,59 +22,59 @@ public class SnakeBuilder {
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
 
-    public SnakeBuilder host(String host){
+    public SnakeBuilder host(String host) {
         this.host = host;
         return this;
     }
 
-    public SnakeBuilder port(int port){
+    public SnakeBuilder port(int port) {
         this.port = port;
         return this;
     }
 
-    public SnakeBuilder threads(int threads){
+    public SnakeBuilder threads(int threads) {
         this.threads = threads;
         return this;
     }
 
-    public SnakeBuilder heartbeatInterval(int heartbeatInterval){
+    public SnakeBuilder heartbeatInterval(int heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
         return this;
     }
 
-    public SnakeBuilder heartbeatEnable(boolean heartbeatEnable){
+    public SnakeBuilder heartbeatEnable(boolean heartbeatEnable) {
         this.heartbeatEnable = heartbeatEnable;
         return this;
     }
 
-    public SnakeBuilder heartbeatListener(HeartbeatListener heartbeatListener){
+    public SnakeBuilder heartbeatListener(HeartbeatListener heartbeatListener) {
         this.heartbeatListener = heartbeatListener;
         return this;
     }
 
-    public SnakeBuilder messageReceivedListener(MessageReceivedListener listener){
+    public SnakeBuilder messageReceivedListener(MessageReceivedListener listener) {
         this.messageReceivedListener = listener;
         return this;
     }
 
-    public SnakeBuilder autoConnectRetry(boolean autoConnectRetry){
+    public SnakeBuilder autoConnectRetry(boolean autoConnectRetry) {
         this.autoConnectRetry = autoConnectRetry;
         return this;
     }
 
-    public SnakeBuilder sessionCreatedListener(SessionCreatedListener listener){
+    public SnakeBuilder sessionCreatedListener(SessionCreatedListener listener) {
         this.sessionCreatedListener = listener;
         return this;
     }
 
-    public SnakeBuilder sessionClosedListener(SessionClosedListener sessionClosedListener){
+    public SnakeBuilder sessionClosedListener(SessionClosedListener sessionClosedListener) {
         this.sessionClosedListener = sessionClosedListener;
         return this;
     }
 
-    public Snake build(){
+    public Snake build() {
         Asserts.notNullAssert(host);
-        NettyClient client = new NettyClient(host,port);
+        NettyClient client = new NettyClient(host, port);
         client.setMessageReceivedListener(messageReceivedListener);
         client.setWorkerThreads(threads);
         client.setHeartbeatEnable(heartbeatEnable);

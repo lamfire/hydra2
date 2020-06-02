@@ -11,10 +11,11 @@ import com.lamfire.logger.Logger;
  */
 public class DefaultHeartbeatListener implements HeartbeatListener {
     private static final Logger LOGGER = Logger.getLogger(DefaultHeartbeatListener.class);
+
     @Override
     public void onHeartbeat(Session session, HeartbeatMessage message) {
-        LOGGER.debug("onHeartbeat - " + session +" = " + message);
-        if(message.isHeartbeatRequest()){
+        LOGGER.debug("onHeartbeat - " + session + " = " + message);
+        if (message.isHeartbeatRequest()) {
             session.send(HeartbeatMessage.HEARTBEAT_RESPONSE_MESSAGE);
         }
     }

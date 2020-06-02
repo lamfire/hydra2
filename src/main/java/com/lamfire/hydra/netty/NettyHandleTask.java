@@ -6,7 +6,7 @@ import com.lamfire.hydra.Session;
 import com.lamfire.logger.Logger;
 
 
-class NettyHandleTask implements Runnable{
+class NettyHandleTask implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(NettyHandleTask.class);
     private MessageReceivedListener messageReceivedListener;
     private Message message;
@@ -16,8 +16,8 @@ class NettyHandleTask implements Runnable{
     public void run() {
         try {
             messageReceivedListener.onMessageReceived(session, message);
-        }catch (Throwable t){
-            LOGGER.error(t.getMessage(),t);
+        } catch (Throwable t) {
+            LOGGER.error(t.getMessage(), t);
         }
     }
 

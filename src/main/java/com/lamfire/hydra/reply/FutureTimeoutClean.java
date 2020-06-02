@@ -5,30 +5,30 @@ import java.util.List;
 import java.util.Map;
 
 
-public class FutureTimeoutClean implements Runnable{
+public class FutureTimeoutClean implements Runnable {
 
-    private Map<Integer,Future> replys;
+    private Map<Integer, Future> replys;
 
-    FutureTimeoutClean(Map<Integer, Future> replys){
+    FutureTimeoutClean(Map<Integer, Future> replys) {
         this.replys = replys;
     }
 
 
     @Override
     public void run() {
-        try{
+        try {
             List<Integer> list = new ArrayList<Integer>();
-            for(Map.Entry<Integer,Future> e : replys.entrySet()){
+            for (Map.Entry<Integer, Future> e : replys.entrySet()) {
                 Future f = e.getValue();
-                if(f.isTimeout()){
+                if (f.isTimeout()) {
                     list.add(e.getKey());
                 }
             }
 
-            for(Integer key : list){
+            for (Integer key : list) {
                 replys.remove(key);
             }
-        }catch (Throwable t){
+        } catch (Throwable t) {
 
         }
     }

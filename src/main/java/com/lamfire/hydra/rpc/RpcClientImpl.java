@@ -10,6 +10,12 @@ class RpcClientImpl implements RpcClient {
     private int port;
     private long timeout = 15000l;
     private int threads = 16;
+    private ReplySnake snake;
+
+    public RpcClientImpl(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
 
     public String getHost() {
         return host;
@@ -43,35 +49,28 @@ class RpcClientImpl implements RpcClient {
         this.threads = threads;
     }
 
-    private ReplySnake snake;
-
-    public RpcClientImpl(String host, int port) {
-        this.host = host;
-        this.port = port;
-    }
-
-    public synchronized void startup(){
-        if(snake != null){
+    public synchronized void startup() {
+        if (snake != null) {
             return;
         }
         snake = new ReplySnake();
         snake.setReadTimeoutMillis(timeout);
         snake.setHeartbeatEnable(true);
         snake.setAutoConnectRetry(true);
-        snake.startup(host,port);
+        snake.startup(host, port);
         snake.waitConnections();
     }
 
-    public void shutdown(){
-        if(snake!= null) {
+    public void shutdown() {
+        if (snake != null) {
             snake.shutdown();
             snake = null;
         }
     }
 
     public byte[] invoke(byte[] bytes) throws TimeoutException {
-        if(snake == null){
-           throw new RpcException("RPC client cannot available");
+        if (snake == null) {
+            throw new RpcException("RPC client cannot available");
         }
         Future f = snake.send(bytes);
         return f.getResponse();
@@ -79,7 +78,7 @@ class RpcClientImpl implements RpcClient {
 
     @Override
     public boolean isAvailable() {
-        if(snake == null){
+        if (snake == null) {
             return false;
         }
         return snake.isAvailable();

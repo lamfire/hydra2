@@ -8,5 +8,5 @@ package com.lamfire.hydra;
  * To change this template use File | Settings | File Templates.
  */
 public interface SessionClosedListener {
-    public void onClosed(Session session);
+    void onClosed(Session session);
 }

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class HydraMessageDecoder extends MessageToMessageDecoder<ByteBuf> {
     MessageSerializer serializer = new MessageSerializer();
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
         out.add(serializer.decode(msg));

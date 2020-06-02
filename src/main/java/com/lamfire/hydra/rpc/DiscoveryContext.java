@@ -7,7 +7,7 @@ class DiscoveryContext {
     private DiscoveryMultiCaster multiCaster;
     private DatagramPacket datagramPacket;
 
-    DiscoveryContext(DiscoveryMultiCaster multiCaster, DatagramPacket datagramPacket){
+    DiscoveryContext(DiscoveryMultiCaster multiCaster, DatagramPacket datagramPacket) {
         this.multiCaster = multiCaster;
         this.datagramPacket = datagramPacket;
     }
@@ -21,11 +21,11 @@ class DiscoveryContext {
         return datagramPacket.getAddress();
     }
 
-    public DatagramPacket getDatagramPacket(){
+    public DatagramPacket getDatagramPacket() {
         return this.datagramPacket;
     }
 
-    public int getPort(){
+    public int getPort() {
         return this.datagramPacket.getPort();
     }
 }

@@ -9,7 +9,7 @@ class RpcInvocationHandler implements InvocationHandler {
     private Invoker invoker;
     private ProviderPool pool;
 
-    public RpcInvocationHandler(Class<?> interfaceClass, Invoker invoker, ProviderPool pool){
+    public RpcInvocationHandler(Class<?> interfaceClass, Invoker invoker, ProviderPool pool) {
         this.interfaceClass = interfaceClass;
         this.invoker = invoker;
         this.pool = pool;
@@ -30,7 +30,7 @@ class RpcInvocationHandler implements InvocationHandler {
         if ("equals".equals(methodName) && parameterTypes.length == 1) {
             return proxy.equals(args[0]);
         }
-        Class<?> returnType =  method.getReturnType();
+        Class<?> returnType = method.getReturnType();
         Invocation message = new Invocation();
         message.setRpcInterface(this.interfaceClass);
         message.setMethodName(methodName);
@@ -38,8 +38,8 @@ class RpcInvocationHandler implements InvocationHandler {
         message.setParameters(args);
         message.setReturnType(returnType);
 
-        Object result = invoker.invoke(message,pool.getRpcClient());
-        if(result instanceof Throwable){
+        Object result = invoker.invoke(message, pool.getRpcClient());
+        if (result instanceof Throwable) {
             throw (Throwable) result;
         }
 

@@ -8,7 +8,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 
 import java.util.List;
 
-public class WebSocketMessageDecoder extends MessageToMessageDecoder<BinaryWebSocketFrame>{
+public class WebSocketMessageDecoder extends MessageToMessageDecoder<BinaryWebSocketFrame> {
     MessageSerializer serializer = new MessageSerializer();
 
     @Override

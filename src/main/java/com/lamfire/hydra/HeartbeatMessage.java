@@ -1,6 +1,6 @@
 package com.lamfire.hydra;
 
-public final class HeartbeatMessage extends HydraMessage{
+public final class HeartbeatMessage extends HydraMessage {
     public static final HeartbeatMessage HEARTBEAT_REQUEST_MESSAGE = new HeartbeatMessage();
     public static final HeartbeatMessage HEARTBEAT_RESPONSE_MESSAGE = new HeartbeatMessage();
 
@@ -17,30 +17,23 @@ public final class HeartbeatMessage extends HydraMessage{
         HEARTBEAT_RESPONSE_MESSAGE.header().option(OPTION_HEARTBEAT_RESPONSE);
     }
 
-    public static boolean isHeartbeatRequest(int id,int len,int option){
-        if(id == 0 && len == 0 && option ==OPTION_HEARTBEAT_REQUEST){
-            return true;
-        }
-
-        return false;
+    public static boolean isHeartbeatRequest(int id, int len, int option) {
+        return id == 0 && len == 0 && option == OPTION_HEARTBEAT_REQUEST;
     }
 
-    public static boolean isHeartbeatResponse(int id,int len,int option){
-        if(id == 0 && len == 0 && option == OPTION_HEARTBEAT_RESPONSE){
-            return true;
-        }
-        return false;
+    public static boolean isHeartbeatResponse(int id, int len, int option) {
+        return id == 0 && len == 0 && option == OPTION_HEARTBEAT_RESPONSE;
     }
 
-    public boolean isHeartbeatRequest(){
+    public boolean isHeartbeatRequest() {
         int id = this.header().id();
         int len = this.header().contentLength();
         int option = this.header().option();
 
-        return isHeartbeatRequest(id,len,option);
+        return isHeartbeatRequest(id, len, option);
     }
 
-    public boolean isHeartbeatResponse(){
+    public boolean isHeartbeatResponse() {
         int id = this.header().id();
         int len = this.header().contentLength();
         int option = this.header().option();
@@ -48,12 +41,12 @@ public final class HeartbeatMessage extends HydraMessage{
         return isHeartbeatResponse(id, len, option);
     }
 
-    public String toString(){
-        if(isHeartbeatRequest()){
+    public String toString() {
+        if (isHeartbeatRequest()) {
             return "REQUEST";
         }
 
-        if(isHeartbeatResponse()){
+        if (isHeartbeatResponse()) {
             return "RESPONSE";
         }
 

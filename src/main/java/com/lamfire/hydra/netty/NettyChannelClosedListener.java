@@ -14,19 +14,19 @@ class NettyChannelClosedListener implements GenericFutureListener<Future<Void>> 
 
     private NettySession session;
 
-    public NettyChannelClosedListener(NettySession s){
+    public NettyChannelClosedListener(NettySession s) {
         this.session = s;
     }
 
     @Override
     public void operationComplete(Future<Void> future) throws Exception {
         Collection<SessionClosedListener> listeners = Lists.newArrayList(session.closedListeners());
-        for(SessionClosedListener l : listeners){
+        for (SessionClosedListener l : listeners) {
             l.onClosed(session);
         }
     }
 
-    public NettySession session(){
+    public NettySession session() {
         return session;
     }
 }

@@ -3,7 +3,6 @@ package com.lamfire.hydra.netty.websocket;
 import com.lamfire.hydra.*;
 import com.lamfire.hydra.netty.NettyInboundHandler;
 import com.lamfire.logger.Logger;
-import com.lamfire.utils.ThreadFactory;
 import com.lamfire.utils.Threads;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -16,10 +15,6 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 public class HydraWebSocketServer implements Hydra {
@@ -40,11 +35,11 @@ public class HydraWebSocketServer implements Hydra {
     private String websocketPath = "/ws";
     private int maxContentLength = 65535;
 
-    public HydraWebSocketServer(int port){
+    public HydraWebSocketServer(int port) {
         this.port = port;
     }
 
-    public HydraWebSocketServer(String bind, int port){
+    public HydraWebSocketServer(String bind, int port) {
         this.bind = bind;
         this.port = port;
     }
@@ -61,11 +56,11 @@ public class HydraWebSocketServer implements Hydra {
         this.heartbeatListener = heartbeatListener;
     }
 
-    public void setSessionCreatedListener(SessionCreatedListener listener){
+    public void setSessionCreatedListener(SessionCreatedListener listener) {
         this.sessionCreatedListener = listener;
     }
 
-    public void setSessionClosedListener(SessionClosedListener sessionClosedListener){
+    public void setSessionClosedListener(SessionClosedListener sessionClosedListener) {
         this.sessionClosedListener = sessionClosedListener;
     }
 
@@ -75,7 +70,7 @@ public class HydraWebSocketServer implements Hydra {
     }
 
     public synchronized void startup() {
-        if(bootstrap != null){
+        if (bootstrap != null) {
             LOGGER.error("Bootstrap was running,system shutdown now...");
             System.exit(-1);
         }
@@ -97,23 +92,23 @@ public class HydraWebSocketServer implements Hydra {
                             //ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
                             ch.pipeline().addLast(new WebSocketMessageDecoder());
                             ch.pipeline().addLast(new WebSocketMessageEncoder());
-                            ch.pipeline().addLast(new NettyInboundHandler(mgr,messageReceivedListener,heartbeatListener,sessionCreatedListener,sessionClosedListener));
+                            ch.pipeline().addLast(new NettyInboundHandler(mgr, messageReceivedListener, heartbeatListener, sessionCreatedListener, sessionClosedListener));
                         }
                     }).option(ChannelOption.SO_BACKLOG, 100).childOption(ChannelOption.SO_KEEPALIVE, true);
 
             bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
-            bindFuture = bootstrap.bind(bind,port).sync();
-            LOGGER.info("startup on - " + bind +":" + port + "["+workerThreads+"]");
-        }catch (Exception e){
+            bindFuture = bootstrap.bind(bind, port).sync();
+            LOGGER.info("startup on - " + bind + ":" + port + "[" + workerThreads + "]");
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public synchronized void shutdown(){
+    public synchronized void shutdown() {
         try {
             LOGGER.info("Shutdown listener channel...");
             bindFuture.channel().close().sync();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         LOGGER.info("Shutdown worker group...");

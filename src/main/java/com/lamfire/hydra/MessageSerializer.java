@@ -4,17 +4,17 @@ import io.netty.buffer.ByteBuf;
 
 public class MessageSerializer {
 
-    public void encode(Message msg, ByteBuf out){
+    public void encode(Message msg, ByteBuf out) {
         MessageHeader header = msg.header();
         out.writeInt(header.id());
         out.writeInt(header.option());
         out.writeInt(header.contentLength());
-        if(header.contentLength() > 0){
+        if (header.contentLength() > 0) {
             out.writeBytes(msg.content());
         }
     }
 
-    public Message decode(ByteBuf buf){
+    public Message decode(ByteBuf buf) {
         int id = buf.readInt();
         int option = buf.readInt();
         int contentLength = buf.readInt();

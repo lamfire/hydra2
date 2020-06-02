@@ -8,7 +8,7 @@ public interface Session {
 
     void send(Message message);
 
-    void send(Message message,boolean sync)throws InterruptedException;
+    void send(Message message, boolean sync) throws InterruptedException;
 
     void close();
 
@@ -22,7 +22,7 @@ public interface Session {
 
     Object attr(String name);
 
-    void attr(String name,Object value);
+    void attr(String name, Object value);
 
     void heartbeat();
 
