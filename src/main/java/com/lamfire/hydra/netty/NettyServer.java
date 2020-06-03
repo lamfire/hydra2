@@ -111,6 +111,7 @@ public class NettyServer implements Hydra {
         LOGGER.info("Shutdown boss group...");
         bossGroup.shutdownGracefully();
 
+        this.getSessionMgr().close();
         bossGroup = null;
         workerGroup = null;
         bindFuture = null;

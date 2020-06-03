@@ -12,6 +12,7 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     private HeartbeatListener heartbeatListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
+    private Session session;
 
     public NettyInboundHandler(HydraSessionMgr sessionMgr, MessageReceivedListener messageReceivedListener, HeartbeatListener heartbeatListener, SessionCreatedListener sessionCreatedListener, SessionClosedListener sessionClosedListener) {
         this.sessionMgr = sessionMgr;
@@ -21,10 +22,7 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
         this.sessionClosedListener = sessionClosedListener;
     }
 
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        long sessionId = ctx.channel().hashCode();
-        Session session = sessionMgr.get(sessionId);
-
+    public void channelRead(ChannelHandlerContext ctx, Object msg){
         if (msg instanceof HeartbeatMessage) {
             if (heartbeatListener == null) {
                 return;
@@ -40,7 +38,7 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     }
 
 
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
 
@@ -52,15 +50,15 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        NettySession s = new NettySession(ctx.channel().hashCode(), ctx);
-        sessionMgr.put(s.getId(), s);
+        this.session = new NettySession(ctx.channel().hashCode(), ctx);
+        sessionMgr.put(session.getId(), session);
         if (sessionCreatedListener != null) {
-            sessionCreatedListener.onCreated(s);
+            sessionCreatedListener.onCreated(session);
         }
         if (sessionClosedListener != null) {
-            s.addCloseListener(sessionClosedListener);
+            session.addCloseListener(sessionClosedListener);
         }
-        LOGGER.debug("channelActive - " + s);
+        LOGGER.debug("channelActive - " + session);
     }
 
     @Override
