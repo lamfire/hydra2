@@ -1,5 +1,7 @@
 package com.lamfire.hydra;
 
+import io.netty.bootstrap.ServerBootstrap;
+
 /**
  * Hydra
  * User: linfan
@@ -13,6 +15,8 @@ public interface Hydra {
     void startup();
 
     void shutdown();
+
+    ServerBootstrap getServerBootstrap();
 
     MessageReceivedListener getMessageReceivedListener();
 
