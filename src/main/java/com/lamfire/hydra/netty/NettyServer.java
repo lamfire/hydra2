@@ -19,11 +19,13 @@ import io.netty.handler.codec.LengthFieldPrepender;
 public class NettyServer implements Hydra {
     private static final Logger LOGGER = Logger.getLogger(NettyServer.class);
     private final HydraSessionMgr mgr = new HydraSessionMgr("NettyServer");
+    private final ServerBootstrap bootstrap = new ServerBootstrap();
+
     private MessageReceivedListener messageReceivedListener;
     private SessionCreatedListener sessionCreatedListener;
     private SessionClosedListener sessionClosedListener;
     private HeartbeatListener heartbeatListener;
-    private ServerBootstrap bootstrap;
+
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ChannelFuture bindFuture;
@@ -34,11 +36,17 @@ public class NettyServer implements Hydra {
 
     public NettyServer(int port) {
         this.port = port;
+        initServerBootstrapOption();
     }
 
     public NettyServer(String bind, int port) {
         this.bind = bind;
         this.port = port;
+        initServerBootstrapOption();
+    }
+
+    private void initServerBootstrapOption(){
+        bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
     }
 
     public int getWorkerThreads() {
@@ -67,16 +75,10 @@ public class NettyServer implements Hydra {
     }
 
     public synchronized void startup() {
-        if (bootstrap != null) {
-            LOGGER.error("Bootstrap was already running,system shutdown now...");
-            System.exit(-1);
-        }
-
         bossGroup = new NioEventLoopGroup(1, Threads.makeThreadFactory("Hydra/Boss"));
         workerGroup = new NioEventLoopGroup(workerThreads, Threads.makeThreadFactory("Hydra/Worker"));
 
         try {
-            bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
@@ -89,7 +91,6 @@ public class NettyServer implements Hydra {
                         }
                     }).option(ChannelOption.SO_BACKLOG, 100).childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
             bindFuture = bootstrap.bind(bind, port).sync();
             LOGGER.info("startup on - " + bind + ":" + port + "[" + workerThreads + "]");
         } catch (Exception e) {
@@ -115,7 +116,10 @@ public class NettyServer implements Hydra {
         bossGroup = null;
         workerGroup = null;
         bindFuture = null;
-        bootstrap = null;
+    }
+
+    public ServerBootstrap getServerBootstrap() {
+        return bootstrap;
     }
 
     @Override
