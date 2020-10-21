@@ -1,6 +1,6 @@
 package com.mob.demo;
 
-import com.lamfire.hydra.Message;
+import com.lamfire.hydra.DataPacket;
 import com.lamfire.hydra.reply.Future;
 import com.lamfire.hydra.reply.OnReplyResponseListener;
 import com.lamfire.hydra.reply.ReplySnake;
@@ -50,7 +50,7 @@ public class ReplyBootstrap {
             /** async*/
             f.setOnReplyResponseListener(new OnReplyResponseListener() {
                 @Override
-                public void onReplyResponse(Message response) {
+                public void onReplyResponse(DataPacket response) {
                     c.incrementAndGet();
                 }
             });

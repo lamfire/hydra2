@@ -1,14 +1,14 @@
 package com.lamfire.hydra;
 
 /**
- * Message
+ * DataPacket
  * User: linfan
  * Date: 15-8-18
  * Time: 上午11:14
  * To change this template use File | Settings | File Templates.
  */
-public interface Message {
-    MessageHeader header();
+public interface DataPacket {
+    DataPacketHeader header();
 
     byte[] content();
 

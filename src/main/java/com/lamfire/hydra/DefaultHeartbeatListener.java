@@ -13,10 +13,10 @@ public class DefaultHeartbeatListener implements HeartbeatListener {
     private static final Logger LOGGER = Logger.getLogger(DefaultHeartbeatListener.class);
 
     @Override
-    public void onHeartbeat(Session session, HeartbeatMessage message) {
+    public void onHeartbeat(Session session, HeartbeatDataPacket message) {
         LOGGER.debug("onHeartbeat - " + session + " = " + message);
         if (message.isHeartbeatRequest()) {
-            session.send(HeartbeatMessage.HEARTBEAT_RESPONSE_MESSAGE);
+            session.send(HeartbeatDataPacket.HEARTBEAT_RESPONSE_MESSAGE);
         }
     }
 }

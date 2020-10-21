@@ -1,6 +1,6 @@
 package com.lamfire.hydra.netty;
 
-import com.lamfire.hydra.Message;
+import com.lamfire.hydra.DataPacket;
 import com.lamfire.hydra.MessageReceivedListener;
 import com.lamfire.hydra.Session;
 import com.lamfire.logger.Logger;
@@ -9,13 +9,13 @@ import com.lamfire.logger.Logger;
 class NettyHandleTask implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(NettyHandleTask.class);
     private MessageReceivedListener messageReceivedListener;
-    private Message message;
+    private DataPacket dataPacket;
     private Session session;
 
     @Override
     public void run() {
         try {
-            messageReceivedListener.onMessageReceived(session, message);
+            messageReceivedListener.onMessageReceived(session, dataPacket);
         } catch (Throwable t) {
             LOGGER.error(t.getMessage(), t);
         }
@@ -29,12 +29,12 @@ class NettyHandleTask implements Runnable {
         this.messageReceivedListener = messageReceivedListener;
     }
 
-    public Message getMessage() {
-        return message;
+    public DataPacket getDataPacket() {
+        return dataPacket;
     }
 
-    public void setMessage(Message message) {
-        this.message = message;
+    public void setDataPacket(DataPacket dataPacket) {
+        this.dataPacket = dataPacket;
     }
 
     public Session getSession() {

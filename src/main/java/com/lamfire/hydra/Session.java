@@ -6,9 +6,9 @@ public interface Session {
 
     long getId();
 
-    void send(Message message);
+    void send(DataPacket dataPacket);
 
-    void send(Message message, boolean sync) throws InterruptedException;
+    void send(DataPacket dataPacket, boolean sync) throws InterruptedException;
 
     void close();
 

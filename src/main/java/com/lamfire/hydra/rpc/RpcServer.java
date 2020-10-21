@@ -82,8 +82,8 @@ public class RpcServer implements DiscoveryListener, RPC {
 
         builder.heartbeatListener(new HeartbeatListener() {
             @Override
-            public void onHeartbeat(Session session, HeartbeatMessage message) {
-                session.send(HeartbeatMessage.HEARTBEAT_RESPONSE_MESSAGE);
+            public void onHeartbeat(Session session, HeartbeatDataPacket message) {
+                session.send(HeartbeatDataPacket.HEARTBEAT_RESPONSE_MESSAGE);
             }
         });
 

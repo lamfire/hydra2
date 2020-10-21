@@ -123,6 +123,11 @@ public class HydraWebSocketServer implements Hydra {
     }
 
     @Override
+    public ServerBootstrap getServerBootstrap() {
+        return this.bootstrap;
+    }
+
+    @Override
     public MessageReceivedListener getMessageReceivedListener() {
         return messageReceivedListener;
     }

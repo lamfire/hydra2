@@ -105,7 +105,7 @@ public class ReplySnake implements MessageReceivedListener {
     }
 
     public Future send(byte[] bytes) {
-        Message m = MessageFactory.message(counter.incrementAndGet(), 0, bytes);
+        DataPacket m = DataPacketFactory.message(counter.incrementAndGet(), 0, bytes);
         Future f = new Future();
         f.setTimeout(readTimeoutMillis);
         replys.put(m.header().id(), f);
@@ -115,11 +115,11 @@ public class ReplySnake implements MessageReceivedListener {
 
 
     @Override
-    public void onMessageReceived(Session session, Message message) {
-        Integer id = message.header().id();
+    public void onMessageReceived(Session session, DataPacket dataPacket) {
+        Integer id = dataPacket.header().id();
         Future f = replys.remove(id);
         if (f != null) {
-            f.onResponse(message);
+            f.onResponse(dataPacket);
         }
     }
 

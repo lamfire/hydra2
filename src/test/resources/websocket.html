@@ -109,12 +109,12 @@
         return str;
     }
 
-    function send(message) {
+    function send(dataPacket) {
         if (!window.WebSocket) {
             return;
         }
         if (socket.readyState == WebSocket.OPEN) {
-            var bytes = stringToByte(message);
+            var bytes = stringToByte(dataPacket);
             var bodyLen = bytes.length + 12;
             var buffer = new ArrayBuffer(bodyLen);
             var view = new DataView(buffer);
@@ -133,9 +133,9 @@
 
 </script>
 <form onsubmit="return false;">
-    <textarea id="message" name="message" style="width:500px;height:100px;">WebSocket 最佳实践</textarea>
+    <textarea id="dataPacket" name="dataPacket" style="width:500px;height:100px;">WebSocket 最佳实践</textarea>
     <br><br>
-    <input onclick="send(this.form.message.value)" type="button" value="发送"/>
+    <input onclick="send(this.form.dataPacket.value)" type="button" value="发送"/>
     <hr color="blue"/>
     <h3>服务端返回的应答消息</h3>
     <textarea id="responseText" style="width:500px;height:300px;"></textarea>

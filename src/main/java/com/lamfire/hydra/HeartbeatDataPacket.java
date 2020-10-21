@@ -1,8 +1,8 @@
 package com.lamfire.hydra;
 
-public final class HeartbeatMessage extends HydraMessage {
-    public static final HeartbeatMessage HEARTBEAT_REQUEST_MESSAGE = new HeartbeatMessage();
-    public static final HeartbeatMessage HEARTBEAT_RESPONSE_MESSAGE = new HeartbeatMessage();
+public final class HeartbeatDataPacket extends HydraDataPacket {
+    public static final HeartbeatDataPacket HEARTBEAT_REQUEST_MESSAGE = new HeartbeatDataPacket();
+    public static final HeartbeatDataPacket HEARTBEAT_RESPONSE_MESSAGE = new HeartbeatDataPacket();
 
     private static final int OPTION_HEARTBEAT_REQUEST = 0x9999;
     private static final int OPTION_HEARTBEAT_RESPONSE = 0x8888;

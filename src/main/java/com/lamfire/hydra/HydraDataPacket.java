@@ -4,21 +4,21 @@ package com.lamfire.hydra;
 import java.nio.charset.Charset;
 
 /**
- * HydraMessage
+ * HydraDataPacket
  * User: linfan
  * Date: 15-8-18
  * Time: 上午11:31
  * To change this template use File | Settings | File Templates.
  */
-class HydraMessage implements Message {
-    private final MessageHeader header = new MessageHeader();
+class HydraDataPacket implements DataPacket {
+    private final DataPacketHeader header = new DataPacketHeader();
     private byte[] content;
 
-    HydraMessage() {
+    HydraDataPacket() {
 
     }
 
-    HydraMessage(int id, byte[] content) {
+    HydraDataPacket(int id, byte[] content) {
         id(id);
         content(content);
     }
@@ -32,7 +32,7 @@ class HydraMessage implements Message {
     }
 
     @Override
-    public MessageHeader header() {
+    public DataPacketHeader header() {
         return header;
     }
 

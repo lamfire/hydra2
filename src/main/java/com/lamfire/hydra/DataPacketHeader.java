@@ -1,13 +1,13 @@
 package com.lamfire.hydra;
 
 /**
- * MessageHeader
+ * DataPacketHeader
  * User: linfan
  * Date: 15-8-18
  * Time: 上午11:26
  * To change this template use File | Settings | File Templates.
  */
-public class MessageHeader {
+public class DataPacketHeader {
     public static final int HEADER_LENGTH = 12;
     private int id = 0;
     private int contentLength = 0;
@@ -39,7 +39,7 @@ public class MessageHeader {
 
     @Override
     public String toString() {
-        return "MessageHeader{" +
+        return "DataPacketHeader{" +
                 "id=" + id +
                 ", contentLength=" + contentLength +
                 ", option=" + option +

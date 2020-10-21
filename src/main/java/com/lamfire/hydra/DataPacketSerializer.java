@@ -2,10 +2,10 @@ package com.lamfire.hydra;
 
 import io.netty.buffer.ByteBuf;
 
-public class MessageSerializer {
+public class DataPacketSerializer {
 
-    public void encode(Message msg, ByteBuf out) {
-        MessageHeader header = msg.header();
+    public void encode(DataPacket msg, ByteBuf out) {
+        DataPacketHeader header = msg.header();
         out.writeInt(header.id());
         out.writeInt(header.option());
         out.writeInt(header.contentLength());
@@ -14,7 +14,7 @@ public class MessageSerializer {
         }
     }
 
-    public Message decode(ByteBuf buf) {
+    public DataPacket decode(ByteBuf buf) {
         int id = buf.readInt();
         int option = buf.readInt();
         int contentLength = buf.readInt();
@@ -22,13 +22,13 @@ public class MessageSerializer {
         byte[] content = null;
 
         //is heartbeat request
-        if (HeartbeatMessage.isHeartbeatRequest(id, contentLength, option)) {
-            return HeartbeatMessage.HEARTBEAT_REQUEST_MESSAGE;
+        if (HeartbeatDataPacket.isHeartbeatRequest(id, contentLength, option)) {
+            return HeartbeatDataPacket.HEARTBEAT_REQUEST_MESSAGE;
         }
 
         //is heartbeat request
-        if (HeartbeatMessage.isHeartbeatResponse(id, contentLength, option)) {
-            return HeartbeatMessage.HEARTBEAT_RESPONSE_MESSAGE;
+        if (HeartbeatDataPacket.isHeartbeatResponse(id, contentLength, option)) {
+            return HeartbeatDataPacket.HEARTBEAT_RESPONSE_MESSAGE;
         }
 
 
@@ -37,6 +37,6 @@ public class MessageSerializer {
             content = new byte[contentLength];
             buf.readBytes(content);
         }
-        return MessageFactory.message(id, option, content);
+        return DataPacketFactory.message(id, option, content);
     }
 }

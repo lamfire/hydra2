@@ -1,7 +1,7 @@
 package com.lamfire.hydra.rpc;
 
-import com.lamfire.hydra.Message;
-import com.lamfire.hydra.MessageFactory;
+import com.lamfire.hydra.DataPacket;
+import com.lamfire.hydra.DataPacketFactory;
 import com.lamfire.hydra.MessageReceivedListener;
 import com.lamfire.hydra.Session;
 import com.lamfire.logger.Logger;
@@ -32,17 +32,17 @@ class RpcServerHandler implements MessageReceivedListener {
     }
 
     @Override
-    public void onMessageReceived(Session session, Message message) {
+    public void onMessageReceived(Session session, DataPacket dataPacket) {
         byte[] resultBytes = null;
         try {
-            byte[] bytes = message.content();
+            byte[] bytes = dataPacket.content();
             Invocation msg = serializer.decode(bytes, Invocation.class);
             invoke(msg);
             resultBytes = serializer.encode(msg);
         } catch (Throwable t) {
             LOGGER.error(t.getMessage(), t);
         } finally {
-            session.send(MessageFactory.makeMessage(message.getId(), message.getOption(), resultBytes));
+            session.send(DataPacketFactory.makeMessage(dataPacket.getId(), dataPacket.getOption(), resultBytes));
         }
     }
 
@@ -55,7 +55,7 @@ class RpcServerHandler implements MessageReceivedListener {
             msg.setStatus(Invocation.STATUS_RESPONSE);
             msg.setReturnValue(result);
         } catch (Throwable t) {
-            //LOGGER.debug(t.getMessage(),t);
+            //LOGGER.debug(t.getDataPacket(),t);
             msg.setStatus(Invocation.STATUS_EXCEPTION);
             msg.setReturnValue(StringUtils.dumpStackTraceAsString(t));
         }

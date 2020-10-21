@@ -1,10 +1,8 @@
 package com.mob.demo;
 
-import com.lamfire.code.CRC32;
 import com.lamfire.hydra.*;
 import com.lamfire.utils.OPSMonitor;
 import com.lamfire.utils.RandomUtils;
-import com.lamfire.utils.Threads;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,7 +32,7 @@ public class PerformenceTest implements MessageReceivedListener {
 
         String data = RandomUtils.randomText(100);
         byte[] content = data.getBytes();
-        Message m = MessageFactory.message(0,0,content);
+        DataPacket m = DataPacketFactory.message(0,0,content);
 
         for(int i=0;i<100;i++) {
             session.send(m);
@@ -43,8 +41,8 @@ public class PerformenceTest implements MessageReceivedListener {
     }
 
     @Override
-    public void onMessageReceived(Session session, Message message) {
+    public void onMessageReceived(Session session, DataPacket dataPacket) {
         monitor.done();
-        session.send(message);
+        session.send(dataPacket);
     }
 }

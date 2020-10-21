@@ -1,7 +1,7 @@
 package com.lamfire.hydra.netty;
 
-import com.lamfire.hydra.HeartbeatMessage;
-import com.lamfire.hydra.Message;
+import com.lamfire.hydra.HeartbeatDataPacket;
+import com.lamfire.hydra.DataPacket;
 import com.lamfire.hydra.Session;
 import com.lamfire.hydra.SessionClosedListener;
 import com.lamfire.utils.Lists;
@@ -35,12 +35,12 @@ public class NettySession implements Session {
     }
 
     @Override
-    public void send(Message message) {
-        channelContext.writeAndFlush(message);
+    public void send(DataPacket dataPacket) {
+        channelContext.writeAndFlush(dataPacket);
     }
 
-    public void send(Message message, boolean sync) throws InterruptedException {
-        ChannelFuture future = channelContext.writeAndFlush(message);
+    public void send(DataPacket dataPacket, boolean sync) throws InterruptedException {
+        ChannelFuture future = channelContext.writeAndFlush(dataPacket);
         if (sync) {
             future.sync();
         }
@@ -85,7 +85,7 @@ public class NettySession implements Session {
     }
 
     public void heartbeat() {
-        send(HeartbeatMessage.HEARTBEAT_REQUEST_MESSAGE);
+        send(HeartbeatDataPacket.HEARTBEAT_REQUEST_MESSAGE);
     }
 
     public Channel channel() {

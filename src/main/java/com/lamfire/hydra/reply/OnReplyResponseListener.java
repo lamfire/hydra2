@@ -1,7 +1,7 @@
 package com.lamfire.hydra.reply;
 
-import com.lamfire.hydra.Message;
+import com.lamfire.hydra.DataPacket;
 
 public interface OnReplyResponseListener {
-    void onReplyResponse(Message response);
+    void onReplyResponse(DataPacket response);
 }

@@ -23,17 +23,17 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
     }
 
     public void channelRead(ChannelHandlerContext ctx, Object msg){
-        if (msg instanceof HeartbeatMessage) {
+        if (msg instanceof HeartbeatDataPacket) {
             if (heartbeatListener == null) {
                 return;
             }
-            HeartbeatMessage hm = (HeartbeatMessage) msg;
+            HeartbeatDataPacket hm = (HeartbeatDataPacket) msg;
             heartbeatListener.onHeartbeat(session, hm);
             return;
         }
 
-        if (messageReceivedListener != null && msg instanceof Message) {
-            messageReceivedListener.onMessageReceived(session, (Message) msg);
+        if (messageReceivedListener != null && msg instanceof DataPacket) {
+            messageReceivedListener.onMessageReceived(session, (DataPacket) msg);
         }
     }
 

@@ -1,17 +1,17 @@
 package com.lamfire.hydra.reply;
 
-import com.lamfire.hydra.Message;
+import com.lamfire.hydra.DataPacket;
 
 import java.util.concurrent.TimeoutException;
 
 public class Future {
     private final long createAt = System.currentTimeMillis();
-    private Message response;
+    private DataPacket response;
     private long timeout = 30000;
     private boolean responseReceived = false;
     private OnReplyResponseListener onReplyResponseListener;
 
-    public synchronized Message getResponseMessage() throws TimeoutException {
+    public synchronized DataPacket getResponseMessage() throws TimeoutException {
         if (response == null && !responseReceived) {
             try {
                 this.wait(timeout);
@@ -29,7 +29,7 @@ public class Future {
         return getResponseMessage().content();
     }
 
-    synchronized void onResponse(Message response) {
+    synchronized void onResponse(DataPacket response) {
         this.response = response;
         this.responseReceived = true;
         this.notifyAll();

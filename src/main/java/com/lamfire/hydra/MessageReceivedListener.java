@@ -8,5 +8,5 @@ package com.lamfire.hydra;
  * To change this template use File | Settings | File Templates.
  */
 public interface MessageReceivedListener {
-    void onMessageReceived(Session session, Message message);
+    void onMessageReceived(Session session, DataPacket dataPacket);
 }

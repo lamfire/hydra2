@@ -40,9 +40,9 @@ public class HydraBootstrap implements MessageReceivedListener ,SessionCreatedLi
     }
 
     @Override
-    public void onMessageReceived(Session session, Message message) {
-        //System.out.println("[MESSAGE] : "+message.header() +" -> " + (message.content()==null?"":new String(message.content())));
-        session.send(message);
+    public void onMessageReceived(Session session, DataPacket dataPacket) {
+        //System.out.println("[MESSAGE] : "+dataPacket.header() +" -> " + (dataPacket.content()==null?"":new String(dataPacket.content())));
+        session.send(dataPacket);
     }
 
     @Override

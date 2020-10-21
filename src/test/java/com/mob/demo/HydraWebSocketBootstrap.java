@@ -1,7 +1,6 @@
 package com.mob.demo;
 
 import com.lamfire.hydra.*;
-import com.lamfire.hydra.netty.websocket.HydraWebSocketServer;
 import com.lamfire.utils.StringUtils;
 
 import java.util.Collection;
@@ -40,9 +39,9 @@ public class HydraWebSocketBootstrap implements MessageReceivedListener ,Session
     }
 
     @Override
-    public void onMessageReceived(Session session, Message message) {
-        System.out.println("[MESSAGE] : "+message.header() +" -> " + (message.content()==null?"":new String(message.content())));
-        session.send(message);
+    public void onMessageReceived(Session session, DataPacket dataPacket) {
+        System.out.println("[MESSAGE] : "+ dataPacket.header() +" -> " + (dataPacket.content()==null?"":new String(dataPacket.content())));
+        session.send(dataPacket);
     }
 
     @Override

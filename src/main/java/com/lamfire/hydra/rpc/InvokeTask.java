@@ -1,7 +1,7 @@
 package com.lamfire.hydra.rpc;
 
-import com.lamfire.hydra.Message;
-import com.lamfire.hydra.MessageFactory;
+import com.lamfire.hydra.DataPacket;
+import com.lamfire.hydra.DataPacketFactory;
 import com.lamfire.hydra.Session;
 import com.lamfire.logger.Logger;
 import com.lamfire.utils.StringUtils;
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public class InvokeTask implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(InvokeTask.class);
     private Session session;
-    private Message message;
+    private DataPacket dataPacket;
     private RpcSerializer serializer;
     private ServiceRegistryConfig serviceRegistry;
 
@@ -23,12 +23,12 @@ public class InvokeTask implements Runnable {
         this.session = session;
     }
 
-    public Message getMessage() {
-        return message;
+    public DataPacket getDataPacket() {
+        return dataPacket;
     }
 
-    public void setMessage(Message message) {
-        this.message = message;
+    public void setDataPacket(DataPacket dataPacket) {
+        this.dataPacket = dataPacket;
     }
 
     public RpcSerializer getSerializer() {
@@ -51,14 +51,14 @@ public class InvokeTask implements Runnable {
     public void run() {
         byte[] resultBytes = null;
         try {
-            byte[] bytes = message.content();
+            byte[] bytes = dataPacket.content();
             Invocation msg = serializer.decode(bytes, Invocation.class);
             invoke(msg);
             resultBytes = serializer.encode(msg);
         } catch (Throwable t) {
             LOGGER.error(t.getMessage(), t);
         } finally {
-            session.send(MessageFactory.makeMessage(message.getId(), message.getOption(), resultBytes));
+            session.send(DataPacketFactory.makeMessage(dataPacket.getId(), dataPacket.getOption(), resultBytes));
         }
     }
 
@@ -71,7 +71,7 @@ public class InvokeTask implements Runnable {
             msg.setStatus(Invocation.STATUS_RESPONSE);
             msg.setReturnValue(result);
         } catch (Throwable t) {
-            //LOGGER.debug(t.getMessage(),t);
+            //LOGGER.debug(t.getDataPacket(),t);
             msg.setStatus(Invocation.STATUS_EXCEPTION);
             msg.setReturnValue(StringUtils.dumpStackTraceAsString(t));
         }

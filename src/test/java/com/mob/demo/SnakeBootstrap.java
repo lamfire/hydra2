@@ -32,7 +32,7 @@ public class SnakeBootstrap implements MessageReceivedListener {
             //System.out.println(i + " - CRC32 = " + crc32 + " -> " + data);
 
             int id = i++;
-            Message m = MessageFactory.message(id,option,content);
+            DataPacket m = DataPacketFactory.message(id,option,content);
             session.send(m);
 
             Threads.sleep(10);
@@ -40,7 +40,7 @@ public class SnakeBootstrap implements MessageReceivedListener {
     }
 
     @Override
-    public void onMessageReceived(Session session, Message message) {
-        System.out.println("[MESSAGE] : "+message.header() +" -> " + (message.content()==null?"":new String(message.content())));
+    public void onMessageReceived(Session session, DataPacket dataPacket) {
+        System.out.println("[MESSAGE] : "+ dataPacket.header() +" -> " + (dataPacket.content()==null?"":new String(dataPacket.content())));
     }
 }
