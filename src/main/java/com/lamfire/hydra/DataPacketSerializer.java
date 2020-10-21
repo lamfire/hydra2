@@ -37,6 +37,6 @@ public class DataPacketSerializer {
             content = new byte[contentLength];
             buf.readBytes(content);
         }
-        return DataPacketFactory.message(id, option, content);
+        return DataPacketFactory.make(id, option, content);
     }
 }

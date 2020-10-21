@@ -58,7 +58,7 @@ public class InvokeTask implements Runnable {
         } catch (Throwable t) {
             LOGGER.error(t.getMessage(), t);
         } finally {
-            session.send(DataPacketFactory.makeMessage(dataPacket.getId(), dataPacket.getOption(), resultBytes));
+            session.send(DataPacketFactory.make(dataPacket.getId(), dataPacket.getOption(), resultBytes));
         }
     }
 

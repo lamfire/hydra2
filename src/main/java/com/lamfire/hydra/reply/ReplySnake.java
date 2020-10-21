@@ -105,7 +105,7 @@ public class ReplySnake implements MessageReceivedListener {
     }
 
     public Future send(byte[] bytes) {
-        DataPacket m = DataPacketFactory.message(counter.incrementAndGet(), 0, bytes);
+        DataPacket m = DataPacketFactory.make(counter.incrementAndGet(), 0, bytes);
         Future f = new Future();
         f.setTimeout(readTimeoutMillis);
         replys.put(m.header().id(), f);

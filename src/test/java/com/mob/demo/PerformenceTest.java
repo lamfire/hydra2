@@ -32,7 +32,7 @@ public class PerformenceTest implements MessageReceivedListener {
 
         String data = RandomUtils.randomText(100);
         byte[] content = data.getBytes();
-        DataPacket m = DataPacketFactory.message(0,0,content);
+        DataPacket m = DataPacketFactory.make(0,0,content);
 
         for(int i=0;i<100;i++) {
             session.send(m);
