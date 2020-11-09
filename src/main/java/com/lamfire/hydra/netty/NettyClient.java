@@ -147,7 +147,7 @@ public class NettyClient implements Snake, SessionCreatedListener {
                         }
                     });
 
-            bootstrap.connect(host, port).await();
+            bootstrap.connect(host, port).sync();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
