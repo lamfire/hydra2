@@ -44,7 +44,6 @@ public class NettyInboundHandler extends ChannelInboundHandlerAdapter {
 
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         LOGGER.debug(cause.getMessage(), cause);
-        ctx.close();
     }
 
     @Override
